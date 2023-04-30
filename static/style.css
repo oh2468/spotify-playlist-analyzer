@@ -1,0 +1,122 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: limegreen;
+}
+
+.navbar {
+    background-color: lightblue;
+}
+
+.navbar > ul {
+    list-style-type: none;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+}
+
+.navbar li {
+    padding: 1em;
+    margin: 0 0 0 -2px;
+    display: block;
+    float: left;
+    border: 2px dotted lightblue;
+    
+}
+
+.navbar a, .navbar span {
+    text-decoration: none;
+    color: red;
+}
+
+.menu-item {
+    background-color: black;
+    cursor: pointer;
+}
+
+.menu-expand {
+    width: 30%;
+}
+
+.menu-expand * {
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-expand input {
+    background-color: none;
+    width: 65%;
+}
+
+.menu-expand button {
+    margin-left: 0.5em;
+    width: 30%;
+    border-radius: 6px;
+    background-color: orange;
+    
+}
+
+.content * {
+    margin: auto;
+    padding: 0 1%;
+}
+
+.content > header * {
+    text-align: center;
+    padding: 1em;
+}
+
+.flashes * {
+    color: maroon;
+    font-weight: bolder;
+}
+
+.flashes ul, .flashes li {
+    padding: 0;
+    margin: 0;
+    font-size: larger;
+}
+
+.content > form > label {
+    text-align: center;
+    font-weight: bolder;
+}
+
+.content > form * {
+    padding: 0.5em 0;
+    display: block;
+    width: 50%;
+}
+
+.content > form > button {
+    background-color: orange;
+    border-radius: 12px;
+    width: 40%;
+}
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    background-color: white;
+}
+
+.content td {
+    padding: 0.5em;
+}
+
+.content table {
+    padding: 0.5em 0.5em;
+}
+
+#search-query {
+    color: orange;
+}
+
+.center {
+    text-align: center;
+}

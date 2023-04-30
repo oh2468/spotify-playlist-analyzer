@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>{% block title %}Artist{% endblock %} results for: <span id="search-query">{{ data.artist }}</span></h1>
+{% endblock %}
+
+{% block content %}
+<div id="arist-albums">
+    <table id="artist-albums-table">
+    {% include "data_tables/album.html" %}
+    </table>
+</div>
+
+<div id="artist-singles"></div>
+
+<div id="artist-compilations">
+    {% include "data_tables/playlist.html" %}
+</div>
+
+<div id="artist_appears_on"></div>
+
+<!-- <table id="artist-singles-table">
+{% include "data_tables/single.html" %}
+</table> -->
+
+{% endblock %}

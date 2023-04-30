@@ -1,0 +1,18 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# my todo list
+TODO.txt
+
+# a test file
+test.py
+
+# text files containing api keys
+*.txt
+
+# development files
+old_html_files/
+pygal_tests/
+spotify_responses/

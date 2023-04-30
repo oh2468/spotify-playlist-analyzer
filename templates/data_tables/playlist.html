@@ -1,0 +1,23 @@
+<thead>
+    <tr>
+        <th value="number">No.</th>
+        <th value="string">Name</th>
+        <th value="string">Owner</th>
+        <th value="number">Song count</th>
+        <th value="string">Collaborative</th>
+        <th value="string">Id</th>
+    </tr>
+</thead>
+<tbody>
+    {% for res in data.playlists %}
+    <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ res["name"] }}</td>
+        <td>{{ res["owner"]["display_name"] }}</td>
+        <td>{{ res["tracks"]["total"] }}</td>
+        <td>{{ res["collaborative"] }}</td>
+        <td>{{ res["id"] }}</td>
+        <td><a href="/playlist/{{ res['id'] }}"><button type="button">Analyze</button></a></td>
+    </tr>
+    {% endfor %}
+</tbody>

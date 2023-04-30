@@ -1,0 +1,26 @@
+<tr>
+    <th value="number">No.</th>
+    <th value="string">Name</th>
+    <th value="number">Popularity</th>
+    <th value="number">Followers</th>
+    <th value="string">Genres</th>
+    <th value="string">Id</th>
+    <th value="string">Image</th>
+    <th value="string"></th>
+</tr>
+{% for res in data.artists %}
+<tr>
+    <td>{{ loop.index }}</td>
+    <td>{{ res["name"] }}</td>
+    <td>{{ res["popularity"] }}</td>
+    <td>{{ res["followers"]["total"] }}</td>
+    <td>{{ res["genres"]|join(", ") }}</td>
+    <td>{{ res["id"] }}</td>
+    {% if res["images"][0] %}
+        <td value='{{ res["images"][0]["url"] }}'><a href='{{ res["images"][0]["url"] }}' target="_blank" rel="noopener noreferrer">Image link</a></td>
+    {% else %}
+        <td>no image found</td>
+    {% endif %}
+    <td><a href="/artist/{{ res['id'] }}"><button type="button">Artist Content</button></a></td>
+</tr>
+{% endfor %}

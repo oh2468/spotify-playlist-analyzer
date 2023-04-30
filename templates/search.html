@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>{% block title %}Search{% endblock %} results for {{ data.search_type }}: <span id="search-query">{{ data.search_query }}</span></h1>
+<!-- <h3>{{ data.search_type|capitalize }} search</h3> -->
+<!-- <h4>Showing search result for {{ data[data.key]|count }} of {{ data.total }} {{ data.search_type }}s.</h4> -->
+{% endblock %}
+
+{% block content %}
+<h2 class="center">Showing {{ data[data.key]|count }} of {{ data.total }} {{ data.search_type }}s</h2>
+<table id="search-result-table">
+{% include "data_tables/" + data.search_type + ".html" %}
+</table>
+
+{% endblock %}

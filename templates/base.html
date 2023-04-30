@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>SPA - {% block title %}{% endblock %}</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+    </head>
+    
+    <body>
+        <div class="navbar">
+            <ul>
+                <li class="menu-item"><a href="{{ url_for('index') }}">Home</a></li>
+                <li class="menu-item"><span id="playlist-tag">Search Playlist</a></span>
+                <li class="menu-expand" style="display: none;">
+                    <form method="GET" action="/search">
+                        <input type="text" name="playlist" id="playlist_search" placeholder="Search for a public playlist" required/>
+                        <button>Search</button>
+                    </form>
+                </li>
+                <li class="menu-item"><span id="album-tag">Search Album</a></span>
+                    <li class="menu-expand" style="display: none;">
+                    <form method="GET" action="/search">
+                        <input type="text" name="album" id="album_search" placeholder="Search for an album" required/>
+                        <button>Search</button>
+                    </form>
+                </li>
+                <li class="menu-item"><span id="artist-tag">Search Artist</a></span>
+                    <li class="menu-expand" style="display: none;">
+                        <form method="GET" action="/search">
+                            <input type="text" name="artist" id="artist_search" placeholder="Search for an artist" required/>
+                            <button>Search</button>
+                        </form>
+                    </li>
+                </li>
+                <li class="menu-item"><span id="user-tag">User Playlists</a></span>
+                <li class="menu-expand" style="display: none;">
+                    <form id="user-form" method="GET" action="/search">
+                        <input type="text" name="user" id="user_search" placeholder="View a users public playlists" required pattern="\S+"/>
+                        <button>Search</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    
+        <div class="content">
+            <header>
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    <div class="flashes">
+                        <h1> -- WARNING ERRORS OCCURED -- </h1>
+                        <ul>
+                            {% for message in messages %}
+                                <li>{{ message }}</li>
+                            {% endfor %}
+                            </ul>
+                    </div>
+                    {% endif %}
+                {% endwith %}
+                
+                {% block header %}
+                {% endblock %}
+            </header>
+    
+            {% block content %}
+            {% endblock %}
+        </section>
+    </body>
+
+</html>
