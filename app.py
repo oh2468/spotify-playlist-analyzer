@@ -10,9 +10,14 @@ sp_handler = SpotifyHandler()
 #sp_handler = None
 
 
-@app.template_filter('format_time')
+@app.template_filter("format_time")
 def format_time(t):
     return str(timedelta(milliseconds=t)).split(".")[0]
+
+
+@app.template_filter("format_artists")
+def format_artists(artists):
+    return ", ".join(artist["name"] for artist in artists)
 
 
 def _do_analysis(tracks, name, type):
