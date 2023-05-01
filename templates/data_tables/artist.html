@@ -10,8 +10,8 @@
         <th value="string"></th>
     </tr>
 </thead>
-{% for res in results %}
 <tbody>
+    {% for res in results %}
     <tr>
         <td>{{ loop.index }}</td>
         <td>{{ res["name"] }}</td>
@@ -26,5 +26,5 @@
         {% endif %}
         <td><a href="/artist/{{ res['id'] }}"><button type="button">Artist Content</button></a></td>
     </tr>
+    {% endfor %}
 </tbody>
-{% endfor %}
