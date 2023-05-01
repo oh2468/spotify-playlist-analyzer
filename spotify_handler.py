@@ -238,7 +238,7 @@ class SpotifyHandler:
         
         with open("spotify_responses/artist_top_tracks.json", "w", encoding="UTF-8") as file: json.dump(artist_top_tracks, file)
 
-        return artist_top_tracks
+        return artist_top_tracks["tracks"]
     
 
     def get_artist_appears_on(self, artist_id):
