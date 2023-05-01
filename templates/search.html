@@ -7,9 +7,11 @@
 {% endblock %}
 
 {% block content %}
-<h2 class="center">Showing {{ data[data.key]|count }} of {{ data.total }} {{ data.search_type }}s</h2>
+<h2 class="center">Showing {{ data.results|count }} of {{ data.total }} {{ data.search_type }}s</h2>
 <table id="search-result-table">
-{% include "data_tables/" + data.search_type + ".html" %}
+{% with results = data.results %}
+    {% include "data_tables/" + data.search_type + ".html" %}
+{% endwith %}
 </table>
 
 {% endblock %}
