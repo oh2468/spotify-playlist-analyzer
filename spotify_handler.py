@@ -23,7 +23,7 @@ class SpotifyHandler:
     _ARTIST_CONTENT_URL = "https://api.spotify.com/v1/artists/{id}/albums?include_groups={type}&limit=50"
     _ARTIST_APPEARS_ON_URL = "https://api.spotify.com/v1/artists/{id}/albums?include_groups=appears_on"
     _ARTIST_RELATED = "https://api.spotify.com/v1/artists/{id}/related-artists"
-    _ARTIST_TOP_TRACKS = "https://api.spotify.com/v1/artists/{id}/top-tracks"
+    _ARTIST_TOP_TRACKS = "https://api.spotify.com/v1/artists/{id}/top-tracks?market={market}"
     _AUDIO_FEATURE_LIMIT = 50
     _TRACK_ID_LIMIT = 50
     _SEARCH_LIMIT = 50
@@ -230,6 +230,16 @@ class SpotifyHandler:
 
         return artist_all
 
+
+    def get_artist_top_tracks(self, artist_id, market="SE"):
+        response = self._session.get(self._ARTIST_TOP_TRACKS.format(id=artist_id, market=market))
+        response = self._validate_response(response)
+        artist_top_tracks = response.json()
+        
+        with open("spotify_responses/artist_top_tracks.json", "w", encoding="UTF-8") as file: json.dump(artist_top_tracks, file)
+
+        return artist_top_tracks
+    
 
     def get_artist_appears_on(self, artist_id):
         response = self._session.get(self._ARTIST_APPEARS_ON_URL.format(id=artist_id))
