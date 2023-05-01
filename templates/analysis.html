@@ -28,7 +28,7 @@
         <tr>
             <td>{{ loop.index }}</td>
             <td>{{ tr["track"]["name"] }}</td>
-            <td>{{ tr["track"]["artists"]|map(attribute="name")|join(", ") }}</td>
+            <td>{{ tr["track"]["artists"]|format_artists }}</td>
             <td>{{ tr["track"]["album"]["name"] }}</td>
             <!-- <td>{{ tr["track"]["is_local"] }}</td> -->
             <td>{{ tr["track"]["duration_ms"] | format_time }}</td>

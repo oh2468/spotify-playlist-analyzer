@@ -12,7 +12,7 @@
 <tr>
     <td>{{ loop.index }}</td>
     <td>{{ res["name"] }}</td>
-    <td>{{ res["artists"]|map(attribute="name")|join(", ") }}</td>
+    <td>{{ res["artists"]|format_artists }}</td>
     <td>{{ res["total_tracks"] }}</td>
     <td>{{ res["release_date"] }}</td>
     <td>{{ res["id"] }}</td>
