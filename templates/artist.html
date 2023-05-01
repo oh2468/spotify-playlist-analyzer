@@ -5,22 +5,32 @@
 {% endblock %}
 
 {% block content %}
-<div id="arist-albums">
-    <table id="artist-albums-table">
-    {% include "data_tables/album.html" %}
+<div>
+    <h2>Top tracks</h2>
+    <table id="top-tracks">
+        {% include "data_tables/track.html" %}
     </table>
 </div>
 
-<div id="artist-singles"></div>
-
-<div id="artist-compilations">
-    {% include "data_tables/playlist.html" %}
+<div id="arist-albums">
+    <h2>Albums</h2>
+    <table id="artist-albums-table">
+        {% include "data_tables/album.html" %}
+    </table>
 </div>
 
-<div id="artist_appears_on"></div>
+<div id="artist-singles">
+    <h2>Singles</h2>
+</div>
 
-<!-- <table id="artist-singles-table">
-{% include "data_tables/single.html" %}
-</table> -->
+<div id="artist-compilations">
+    <h2>Compilations</h2>
+    <table id="artist-compilations-table">
+        {% include "data_tables/playlist.html" %}
+    </table>
+</div>
 
+<div id="artist_appears_on">
+    <h2>Appears on</h2>
+</div>
 {% endblock %}
