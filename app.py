@@ -67,8 +67,9 @@ def search():
         return _return_flash_error(["You do not appear to be searching the proper way..."])
 
     top_results, total = sp_handler.get_search(search_type, search_query)
-    key = f"{search_type}s"
-    data = {key: top_results, "search_query": search_query, "total": total, "search_type": search_type, "key": key}
+    # key = f"{search_type}s"
+    # data = {key: top_results, "search_query": search_query, "total": total, "search_type": search_type, "key": key}
+    data = {"results": top_results, "search_query": search_query, "total": total, "search_type": search_type}
     return render_template("search.html", data=data)
 
 
@@ -128,8 +129,15 @@ def album_analysis(album_id):
 
 @app.get("/artist/<artist_id>")
 def artist_lookup(artist_id):
-    top_tracks = sp_handler.get_artist_top_tracks(artist_id)
-    return render_template("artist.html", data=top_tracks)
+    data = {}
+    data["top_tracks"] = sp_handler.get_artist_top_tracks(artist_id)
+    data["albums"] = sp_handler.get_artist_content(artist_id, "album")
+    data["singles"] = sp_handler.get_artist_content(artist_id, "single")
+    data["compilations"] = sp_handler.get_artist_content(artist_id, "compilation")
+    appears_on, appears_total = sp_handler.get_artist_appears_on(artist_id)
+    data["appears_on"] = appears_on
+    data["appears_on_total"] = appears_total
+    return render_template("artist.html", data=data)
 
 
 @app.get("/user/<username>")
