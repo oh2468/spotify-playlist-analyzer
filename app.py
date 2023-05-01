@@ -123,7 +123,8 @@ def album_analysis(album_id):
 
 @app.get("/artist/<artist_id>")
 def artist_lookup(artist_id):
-    pass
+    top_tracks = sp_handler.get_artist_top_tracks(artist_id)
+    return render_template("artist.html", data=top_tracks)
 
 
 @app.get("/user/<username>")
