@@ -8,29 +8,45 @@
 <div>
     <h2>Top tracks</h2>
     <table id="top-tracks">
-        {% include "data_tables/track.html" %}
+        {% with results = data["top_tracks"] %}
+            {% include "data_tables/track.html" %}
+        {% endwith %}
     </table>
 </div>
 
 <div id="arist-albums">
     <h2>Albums</h2>
     <table id="artist-albums-table">
-        {% include "data_tables/album.html" %}
+        {% with results = data["albums"] %}
+            {% include "data_tables/album.html" %}
+        {% endwith %}
     </table>
 </div>
 
 <div id="artist-singles">
     <h2>Singles</h2>
+    <table id="artist-singles-table">
+        {% with results = data["singles"] %}
+            {% include "data_tables/album.html" %}
+        {% endwith %}
+    </table>
 </div>
 
 <div id="artist-compilations">
     <h2>Compilations</h2>
     <table id="artist-compilations-table">
-        {% include "data_tables/playlist.html" %}
+        {% with results = data["compilations"] %}
+            {% include "data_tables/album.html" %}
+        {% endwith %}
     </table>
 </div>
 
 <div id="artist_appears_on">
     <h2>Appears on</h2>
+    <table id="artist-appears-on-table">
+        {% with results = data["appears_on"] %}
+            {% include "data_tables/album.html" %}
+        {% endwith %}
+    </table>
 </div>
 {% endblock %}
