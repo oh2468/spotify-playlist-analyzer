@@ -73,6 +73,7 @@ class SpotifyHandler:
         auth_data["invalid_after"] = auth_data["created_at"] + auth_data["expires_in"]
 
         self._bearer = auth_data["access_token"]
+        self._init_session()
 
         with open(self._API_TOKEN_FILE, "w", encoding="UTF-8") as file:
             json.dump(auth_data, file)
@@ -190,7 +191,14 @@ class SpotifyHandler:
 
         tracks_dict = {track["id"]: {"track": track} for track in spotify_tracks}
         tracks_audio_features = self._get_audio_features(list(tracks_dict.keys()))
+        
+        with open("spotify_responses/track_features.json", "w", encoding="UTF-8") as file: json.dump(tracks_audio_features, file)
 
+        # BUG
+        # some track ids return null, i.e. the list comp fails on af["id"] when af is None
+        # the issue seems to be on spotify's end when a song seems to have multiple ids
+        # and the analysis is done on the original id and not on an id from another compilation/playlist
+        # trying to figure out if the original id/analysis can somehow be found
         track_features_joined = [tracks_dict[af["id"]] | {"audio_feature": af} for af in tracks_audio_features]
 
         with open("spotify_responses/analysis.json", "w", encoding="UTF-8") as file: json.dump(track_features_joined, file)
