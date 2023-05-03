@@ -207,6 +207,7 @@ class SpotifyHandler:
         #   }
         # }
         # a decision needs to be made on how to handle those situations
+        # looks to be this closed issue: https://github.com/spotify/web-api/issues/1570
         track_features_joined = [tracks_dict[af["id"]] | {"audio_feature": af} for af in tracks_audio_features]
 
         with open("spotify_responses/analysis.json", "w", encoding="UTF-8") as file: json.dump(track_features_joined, file)
