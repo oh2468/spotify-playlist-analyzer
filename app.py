@@ -140,6 +140,12 @@ def artist_lookup(artist_id):
     return render_template("artist.html", data=data)
 
 
+@app.get("/track/<track_id>")
+def single_track_analysis(track_id):
+    audio_features = sp_handler.get_tracks_analytics([track_id])
+    return _do_analysis(audio_features, "< single track >", "track")
+
+
 @app.get("/user/<username>")
 def user_playlists(username):
     data = {"username": username, "user_found": False}
