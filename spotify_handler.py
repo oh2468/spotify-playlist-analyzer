@@ -199,6 +199,14 @@ class SpotifyHandler:
         # the issue seems to be on spotify's end when a song seems to have multiple ids
         # and the analysis is done on the original id and not on an id from another compilation/playlist
         # trying to figure out if the original id/analysis can somehow be found
+        # some track ids, e.g. 1nDYJBvNOt5afmquv7y7Ii, audio features return the following:
+        # {
+        #   "error": {
+        #     "status": 404,
+        #     "message": "analysis not found"
+        #   }
+        # }
+        # a decision needs to be made on how to handle those situations
         track_features_joined = [tracks_dict[af["id"]] | {"audio_feature": af} for af in tracks_audio_features]
 
         with open("spotify_responses/analysis.json", "w", encoding="UTF-8") as file: json.dump(track_features_joined, file)
