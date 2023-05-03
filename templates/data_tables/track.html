@@ -19,7 +19,7 @@
         <td>{{ res["name"] }}</td>
         <td>{{ res["artists"]|format_artists }}</td>
         <td>{{ res["album"]["name"] }}</td>
-        <td>{{ res["duration_ms"] }}</td>
+        <td>{{ res["duration_ms"]|format_time }}</td>
         <td>{{ res["popularity"] }}</td>
         <td>{{ res["album"]["release_date"] }}</td>
         <td>{{ res["id"] }}</td>
