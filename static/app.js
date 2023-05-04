@@ -41,6 +41,21 @@ function goToUser(event) {
     console.log(event.target);
 }
 
+function populateMarketSelection(markets) {
+    var marketDropDown = document.getElementById("country-select");
+    markets.forEach(m => {
+        var option = document.createElement("option");
+        option.setAttribute("id", m["code"]);
+        option.text = m["name"];
+        marketDropDown.add(option);
+    })
+}
+
+function setMarket() {
+
+}
+
+
 
 document.querySelectorAll("th")
     .forEach((element, columnNo) => {
@@ -55,3 +70,18 @@ Array.from(document.getElementsByClassName("menu-item")).forEach(element => {
 );
 
 document.getElementById("user-form").addEventListener("submit", event => goToUser(event));
+
+window.onload = function(){
+    markets = localStorage.getItem("markets")
+    if(markets) {
+        populateMarketSelection(JSON.parse(markets));
+    } else {
+        fetch("/market")
+        .then(resp => resp.json())
+        .then(markets => {
+            localStorage.setItem("markets", JSON.stringify(markets));
+            populateMarketSelection(markets);
+        })
+        .catch(err => console.log(err));
+    }
+};
