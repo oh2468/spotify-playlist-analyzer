@@ -12,18 +12,19 @@ class SpotifyHandler:
     _API_TOKEN_FILE = Path(_FILE_DIR, "bearer_token.txt")
     _USER_AGENT = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0"}
     _SPOTIFY_AUTH_URL = "https://accounts.spotify.com/api/token"
-    _SEARCH_URL = "https://api.spotify.com/v1/search" #LIMIT MAX 50
-    _AUDIO_FEATURES_URL = "https://api.spotify.com/v1/audio-features?ids={ids}" # LIMIT MAX 50
-    _PLAYLIST_URL = "https://api.spotify.com/v1/playlists/{id}"
-    _TRACKS_URL = "https://api.spotify.com/v1/tracks?ids={ids}"
-    _ALBUM_SINGLE_URL = "https://api.spotify.com/v1/albums/{id}"
-    _ALBUM_MULTI_URL = "https://api.spotify.com/v1/albums?ids={ids}"
-    _ALBUM_TRACKS_URL = "https://api.spotify.com/v1/albums/{id}/tracks?limit=50"
-    _USER_PLAYLIST_URL = "https://api.spotify.com/v1/users/{user_id}/playlists?limit=50"
-    _ARTIST_CONTENT_URL = "https://api.spotify.com/v1/artists/{id}/albums?include_groups={type}&limit=50"
-    _ARTIST_APPEARS_ON_URL = "https://api.spotify.com/v1/artists/{id}/albums?include_groups=appears_on"
-    _ARTIST_RELATED = "https://api.spotify.com/v1/artists/{id}/related-artists"
-    _ARTIST_TOP_TRACKS = "https://api.spotify.com/v1/artists/{id}/top-tracks?market={market}"
+    _SEARCH_URL = "https://api.spotify.com/v1/search" #LIMIT MAX 50 #MARKET
+    _AUDIO_FEATURES_URL = "https://api.spotify.com/v1/audio-features?ids={ids}" # LIMIT MAX 50 #NOMARKET
+    _PLAYLIST_URL = "https://api.spotify.com/v1/playlists/{id}" #MARKET
+    _TRACKS_URL = "https://api.spotify.com/v1/tracks?ids={ids}" #MARKET
+    _ALBUM_SINGLE_URL = "https://api.spotify.com/v1/albums/{id}" #MARKET
+    _ALBUM_MULTI_URL = "https://api.spotify.com/v1/albums?ids={ids}" #MARKET
+    _ALBUM_TRACKS_URL = "https://api.spotify.com/v1/albums/{id}/tracks?limit=50" #MARKET
+    _USER_PLAYLIST_URL = "https://api.spotify.com/v1/users/{user_id}/playlists?limit=50" #NOMARKET
+    _ARTIST_CONTENT_URL = "https://api.spotify.com/v1/artists/{id}/albums?include_groups={type}&limit=50" #MARKET
+    _ARTIST_APPEARS_ON_URL = "https://api.spotify.com/v1/artists/{id}/albums?include_groups=appears_on" #MARKET
+    _ARTIST_RELATED = "https://api.spotify.com/v1/artists/{id}/related-artists" #NOMARKET
+    _ARTIST_TOP_TRACKS = "https://api.spotify.com/v1/artists/{id}/top-tracks?market={market}" #MARKET (required?)
+    _SPOTIFY_MARKETS_URL = "https://api.spotify.com/v1/markets"
     _AUDIO_FEATURE_LIMIT = 50
     _TRACK_ID_LIMIT = 50
     _SEARCH_LIMIT = 50
@@ -34,8 +35,14 @@ class SpotifyHandler:
     def __init__(self):
         self._session = requests.Session()
         self._bearer = ""
+        self._markets = []
         self._renew_token()
         self._init_session()
+
+
+    @property
+    def markets(self):
+        return self._markets
 
 
     def _valid_token(self):
@@ -88,6 +95,7 @@ class SpotifyHandler:
             "Authorization": f"Bearer {self._bearer}",
         }
         self._session.headers.update(header)
+        self._markets = self._session.get(self._SPOTIFY_MARKETS_URL).json()["markets"]
 
 
     def valid_spotify_urls(self, type, urls):
