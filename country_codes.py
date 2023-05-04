@@ -257,6 +257,7 @@ code_to_name = {
     "VI": "Virgin Islands (U.S.)",
     "VN": "Viet Nam",
     "VU": "Vanuatu",
+    "XK": "Kosovo", # User-assigned code, at the disposal of users who need to add further names of countries, territories, or other geographical entities.
     "WF": "Wallis and Futuna",
     "WS": "Samoa",
     "YE": "Yemen",
