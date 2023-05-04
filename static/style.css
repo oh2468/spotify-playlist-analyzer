@@ -120,3 +120,7 @@ table, th, td {
 .center {
     text-align: center;
 }
+
+#current-country {
+    color: yellow;
+}
