@@ -78,14 +78,14 @@ document.getElementById("user-form").addEventListener("submit", event => goToUse
 document.getElementById("country-select").addEventListener("change", event => setMarket(event));
 
 document.addEventListener("DOMContentLoaded", () => {
-    markets = localStorage.getItem("markets")
+    markets = sessionStorage.getItem("markets")
     if(markets) {
         populateMarketSelection(JSON.parse(markets));
     } else {
         fetch("/markets")
         .then(resp => resp.json())
         .then(markets => {
-            localStorage.setItem("markets", JSON.stringify(markets));
+            sessionStorage.setItem("markets", JSON.stringify(markets));
             populateMarketSelection(markets);
         })
         .catch(err => console.log(err));
