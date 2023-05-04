@@ -164,7 +164,7 @@ def user_playlists(username):
 @app.get("/market")
 def get_markets():
     spotify_markets = sp_handler.markets
-    mapped_markets = [{"code": code, "name": country_codes.code_to_name[code]} for code in spotify_markets]
+    mapped_markets = [{"code": code, "name": country_codes.code_to_name.get(code, code)} for code in spotify_markets]
     return mapped_markets
 
 
