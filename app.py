@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, abort, flash
 from spotify_handler import SpotifyHandler
 from datetime import timedelta
+import country_codes
 
 
 app = Flask(__name__)
@@ -158,6 +159,18 @@ def user_playlists(username):
     data["total"] = playlists[1]
     
     return render_template("user.html", data=data)
+
+
+@app.get("/market")
+def get_markets():
+    spotify_markets = sp_handler.markets
+    mapped_markets = [{"code": code, "name": country_codes.code_to_name[code]} for code in spotify_markets]
+    return mapped_markets
+
+
+@app.post("/market")
+def set_market():
+    pass
 
 
 
