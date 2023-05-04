@@ -49,6 +49,10 @@ def _return_flash_error(error_msgs):
     return redirect(url_for("index"))
 
 
+def _get_market_from_cookie():
+    return request.cookies.get("market", None)
+
+
 @app.get("/")
 def index():
     return render_template("index.html")
