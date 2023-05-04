@@ -45,14 +45,19 @@ function populateMarketSelection(markets) {
     var marketDropDown = document.getElementById("country-select");
     markets.forEach(m => {
         var option = document.createElement("option");
-        option.setAttribute("id", m["code"]);
+        option.setAttribute("value", m["code"]);
         option.text = m["name"];
         marketDropDown.add(option);
     })
 }
 
-function setMarket() {
-
+function setMarket(event) {
+    //console.log(event);
+    market = event.target.value;
+    document.cookie = "market=" + market + "; SameSite=Strict; Secure";
+    var marketTag = document.getElementById("current-country");
+    marketTag.innerText = market;
+    event.target.parentNode.style = "display: None;"
 }
 
 
@@ -70,13 +75,14 @@ Array.from(document.getElementsByClassName("menu-item")).forEach(element => {
 );
 
 document.getElementById("user-form").addEventListener("submit", event => goToUser(event));
+document.getElementById("country-select").addEventListener("change", event => setMarket(event));
 
-window.onload = function(){
+document.addEventListener("DOMContentLoaded", () => {
     markets = localStorage.getItem("markets")
     if(markets) {
         populateMarketSelection(JSON.parse(markets));
     } else {
-        fetch("/market")
+        fetch("/markets")
         .then(resp => resp.json())
         .then(markets => {
             localStorage.setItem("markets", JSON.stringify(markets));
@@ -84,4 +90,4 @@ window.onload = function(){
         })
         .catch(err => console.log(err));
     }
-};
+});
