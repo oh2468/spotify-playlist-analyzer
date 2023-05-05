@@ -218,7 +218,7 @@ class SpotifyHandler:
         
         self._write_json_content_to_file(spotify_tracks, "tracks")
 
-        tracks_dict = {track["id"]: {"track": track} for track in spotify_tracks}
+        tracks_dict = {track["id"]: {"track": track} for track in spotify_tracks if track}
         tracks_audio_features = self._get_audio_features(list(tracks_dict.keys()))
         
         self._write_json_content_to_file(tracks_audio_features, "track_features")
