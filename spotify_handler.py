@@ -7,7 +7,9 @@ from pathlib import Path
 
 
 class SpotifyHandler:
+    _DEBUG_MODE = True
     _FILE_DIR = Path(__file__).parent
+    _OUTPUT_DIR = Path(_FILE_DIR, "spotify_responses")
     _API_KEY_FILE = Path(_FILE_DIR, "api_token.txt")
     _API_TOKEN_FILE = Path(_FILE_DIR, "bearer_token.txt")
     _USER_AGENT = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0"}
@@ -129,8 +131,9 @@ class SpotifyHandler:
 
     def _get_audio_features(self, track_ids):
         audio_features = self._loop_requests_with_limit(self._AUDIO_FEATURES_URL, track_ids, self._AUDIO_FEATURE_LIMIT)
-        with open("spotify_responses/audio_features.json", "w", encoding="UTF-8") as file:
-            json.dump(audio_features, file)
+        self._write_json_content_to_file(audio_features, "audio_features")
+        # with open("spotify_responses/audio_features.json", "w", encoding="UTF-8") as file:
+        #     json.dump(audio_features, file)
         
         return audio_features
 
@@ -169,13 +172,31 @@ class SpotifyHandler:
             return items + self._recurse_all_page_items(response.json())
 
 
+    def _write_json_content_to_file(self, content, filename):
+        if not self._DEBUG_MODE: return False
+
+        if not self._OUTPUT_DIR.exists():
+            self._OUTPUT_DIR.mkdir()
+        
+        if not self._OUTPUT_DIR.is_dir():
+            print("The output location name is already taken by another file....")
+            print(f"The needed name of the directory is: {self._OUTPUT_DIR.stem}")
+            return False
+        
+        with open(self._OUTPUT_DIR.joinpath(f"{filename}.json"), "w", encoding="UTF-8") as file:
+            json.dump(content, file)
+
+        return True
+
+
     def get_playlist_analytics(self, playlist_id):
         self._valid_spotify_ids([playlist_id])
         response = self._session.get(self._PLAYLIST_URL.format(id=playlist_id))
         response = self._validate_response(response)
         playlist = response.json()
 
-        with open("spotify_responses/what.json", "w", encoding="UTF-8") as file: json.dump(playlist, file)
+        #with open("spotify_responses/what.json", "w", encoding="UTF-8") as file: json.dump(playlist, file)
+        self._write_json_content_to_file(playlist, "playlist_base")
 
         spotify_tracks = self._recurse_all_page_items(playlist["tracks"])
         tracks_dict = {track["track"]["id"]: track for track in spotify_tracks}
@@ -186,7 +207,8 @@ class SpotifyHandler:
 
         track_features_joined = [tracks_dict[af["id"]] | {"audio_feature": af} for af in tracks_audio_features]
 
-        with open("spotify_responses/analysis.json", "w", encoding="UTF-8") as file: json.dump(track_features_joined, file)
+        #with open("spotify_responses/analysis.json", "w", encoding="UTF-8") as file: json.dump(track_features_joined, file)
+        self._write_json_content_to_file(track_features_joined, "analysis")
 
         return (playlist["name"], track_features_joined, playlist["type"])
 
@@ -195,12 +217,14 @@ class SpotifyHandler:
         self._valid_spotify_ids(track_ids)
         spotify_tracks = self._loop_requests_with_limit(self._TRACKS_URL, track_ids, self._TRACK_ID_LIMIT)
         
-        with open("spotify_responses/tracks.json", "w", encoding="UTF-8") as file: json.dump(spotify_tracks, file)
+        #with open("spotify_responses/tracks.json", "w", encoding="UTF-8") as file: json.dump(spotify_tracks, file)
+        self._write_json_content_to_file(spotify_tracks, "tracks")
 
         tracks_dict = {track["id"]: {"track": track} for track in spotify_tracks}
         tracks_audio_features = self._get_audio_features(list(tracks_dict.keys()))
         
-        with open("spotify_responses/track_features.json", "w", encoding="UTF-8") as file: json.dump(tracks_audio_features, file)
+        #with open("spotify_responses/track_features.json", "w", encoding="UTF-8") as file: json.dump(tracks_audio_features, file)
+        self._write_json_content_to_file(tracks_audio_features, "track_features")
 
         # BUG
         # some track ids return null, i.e. the list comp fails on af["id"] when af is None
@@ -218,7 +242,8 @@ class SpotifyHandler:
         # looks to be this closed issue: https://github.com/spotify/web-api/issues/1570
         track_features_joined = [tracks_dict[af["id"]] | {"audio_feature": af} for af in tracks_audio_features]
 
-        with open("spotify_responses/analysis.json", "w", encoding="UTF-8") as file: json.dump(track_features_joined, file)
+        #with open("spotify_responses/analysis.json", "w", encoding="UTF-8") as file: json.dump(track_features_joined, file)
+        self._write_json_content_to_file(track_features_joined, "analysis")
 
         return track_features_joined
 
@@ -228,15 +253,17 @@ class SpotifyHandler:
         response = self._validate_response(response)
         album = response.json()
 
-        with open("spotify_responses/album_single.json", "w", encoding="UTF-8") as file:
-            json.dump(album, file)
+        # with open("spotify_responses/album_single.json", "w", encoding="UTF-8") as file:
+        #     json.dump(album, file)
+        self._write_json_content_to_file(album, "album_single")
 
         response = self._session.get(self._ALBUM_TRACKS_URL.format(id=album_id))
         response = self._validate_response(response)
         album_tracks = self._recurse_all_page_items(response.json())
 
-        with open("spotify_responses/album_tracks.json", "w", encoding="UTF-8") as file:
-            json.dump(album_tracks, file)
+        # with open("spotify_responses/album_tracks.json", "w", encoding="UTF-8") as file:
+        #     json.dump(album_tracks, file)
+        self._write_json_content_to_file(album_tracks, "album_tracks")
 
         track_ids = [track["id"] for track in album_tracks]
         return (album["name"], self.get_tracks_analytics(track_ids), album["type"])
@@ -251,7 +278,8 @@ class SpotifyHandler:
         artist_start = response.json()
         artist_all = self._recurse_all_page_items(artist_start)
 
-        with open("spotify_responses/artist.json", "w", encoding="UTF-8") as file: json.dump(artist_all, file)
+        #with open("spotify_responses/artist.json", "w", encoding="UTF-8") as file: json.dump(artist_all, file)
+        self._write_json_content_to_file(artist_all, "artist")
 
         return artist_all
 
@@ -261,7 +289,8 @@ class SpotifyHandler:
         response = self._validate_response(response)
         artist_top_tracks = response.json()
         
-        with open("spotify_responses/artist_top_tracks.json", "w", encoding="UTF-8") as file: json.dump(artist_top_tracks, file)
+        #with open("spotify_responses/artist_top_tracks.json", "w", encoding="UTF-8") as file: json.dump(artist_top_tracks, file)
+        self._write_json_content_to_file(artist_top_tracks, "artist_top_tracks")
 
         return artist_top_tracks["tracks"]
     
@@ -271,7 +300,8 @@ class SpotifyHandler:
         response = self._validate_response(response)
         artist_appears_on = response.json()
 
-        with open("spotify_responses/appears_on.json", "w", encoding="UTF-8") as file: json.dump(artist_appears_on, file)
+        #with open("spotify_responses/appears_on.json", "w", encoding="UTF-8") as file: json.dump(artist_appears_on, file)
+        self._write_json_content_to_file(artist_appears_on, "appears_on")
 
         return (artist_appears_on["items"], artist_appears_on["total"])
 
@@ -285,7 +315,8 @@ class SpotifyHandler:
         print(response.status_code)
 
         content = response.json()
-        with open("spotify_responses/user.json", "w", encoding="UTF-8") as file: json.dump(content, file)
+        #with open("spotify_responses/user.json", "w", encoding="UTF-8") as file: json.dump(content, file)
+        self._write_json_content_to_file(content, "user")
 
         if response.status_code == 200:
             playlists = response.json()
@@ -306,8 +337,9 @@ class SpotifyHandler:
         response = self._validate_response(response)
         results = response.json()
 
-        with open("spotify_responses/search.json", "w", encoding="UTF-8") as file:
-            json.dump(results, file)
+        # with open("spotify_responses/search.json", "w", encoding="UTF-8") as file:
+        #     json.dump(results, file)
+        self._write_json_content_to_file(results, "search")
 
         result_key = f"{type}s"
         return (results[result_key]["items"], results[result_key]["total"])
