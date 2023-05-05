@@ -62,7 +62,7 @@ def index():
 def search():
     try:
         search_type, search_query = list(request.args.items())[0]
-    except KeyError:
+    except IndexError:
         return _return_flash_error(["At least enter something when searching!"])
 
     if search_type == "user":
