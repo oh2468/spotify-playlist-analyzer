@@ -150,6 +150,8 @@ class SpotifyHandler:
             new_response = self._session.send(response.request)
             return self._validate_response(new_response, tries + 1)
         elif response.status_code == 404:
+            print("....ERROR....")
+            print(response)
             # TODO
             # decide how to handle 404 Not Found - The requested resource could not be found. 
             # This error can be due to a temporary or permanent condition.
@@ -301,6 +303,9 @@ class SpotifyHandler:
 
 
     def get_search(self, type, search):
+        if not type or not search:
+            raise ValueError("type and/or search cannot be empty")
+        
         req_url = self._SEARCH_URL.format(q=search, type=type, limit=self._SEARCH_LIMIT)
         results = self._get_request_to_json_response(req_url)
 
