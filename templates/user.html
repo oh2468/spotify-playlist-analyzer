@@ -10,13 +10,13 @@
 {% endif %}
 {% endblock %}
 
-{% if data.user_found%}
 {% block content %}
+{% if data.user_found%}
     <table id="user-contant-table">
     {% with results = data.playlists %}
         {% include "data_tables/playlist.html" %}
     {% endwith %}
     </table>
-{% endblock %}
 {% endif %}
+{% endblock %}
 
