@@ -14,7 +14,7 @@ class SpotifyHandler:
     _API_TOKEN_FILE = Path(_FILE_DIR, "bearer_token.txt")
     _USER_AGENT = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0"}
     _SPOTIFY_AUTH_URL = "https://accounts.spotify.com/api/token"
-    _SEARCH_URL = "https://api.spotify.com/v1/search" #LIMIT MAX 50 #MARKET
+    _SEARCH_URL = "https://api.spotify.com/v1/search?q={q}&type={type}&limit={limit}" #LIMIT MAX 50 #MARKET
     _AUDIO_FEATURES_URL = "https://api.spotify.com/v1/audio-features?ids={ids}" # LIMIT MAX 50 #NOMARKET
     _PLAYLIST_URL = "https://api.spotify.com/v1/playlists/{id}" #MARKET
     _TRACKS_URL = "https://api.spotify.com/v1/tracks?ids={ids}" #MARKET
@@ -123,9 +123,8 @@ class SpotifyHandler:
     def _loop_requests_with_limit(self, base_url, track_ids, max):
         result = []
         for i in range(0, len(track_ids), max):
-            response = self._session.get(base_url.format(ids=",".join(track_ids[i:i + max])))
-            response = self._validate_response(response)
-            result += list(response.json().values())[0]
+            content = self._get_request_to_json_response(base_url.format(ids=",".join(track_ids[i:i + max])))
+            result += list(content.values())[0]
         return result
 
 
@@ -143,7 +142,7 @@ class SpotifyHandler:
         if tries >= 3:
             raise RuntimeError(" -- THERE SEEMS TO BE ISSUES WITH THE SPOTIFY REQUESTS. ABORTING! -- ")
         elif response.status_code == 200:
-            print("valid response")
+            #print("valid response")
             return response
         elif response.status_code == 401:
             print(response)
@@ -151,7 +150,11 @@ class SpotifyHandler:
             new_response = self._session.send(response.request)
             return self._validate_response(new_response, tries + 1)
         elif response.status_code == 404:
-            pass
+            # TODO
+            # decide how to handle 404 Not Found - The requested resource could not be found. 
+            # This error can be due to a temporary or permanent condition.
+            # for now return the response
+            return response
         else:
             # handle unknown error here
             print(response)
@@ -164,9 +167,8 @@ class SpotifyHandler:
             return data["items"]
         else:
             items = data["items"]
-            response = self._session.get(data["next"])
-            response = self._validate_response(response)
-            return items + self._recurse_all_page_items(response.json())
+            content = self._get_request_to_json_response(data["next"])
+            return items + self._recurse_all_page_items(content)
 
 
     def _write_json_content_to_file(self, content, filename):
@@ -186,11 +188,15 @@ class SpotifyHandler:
         return True
 
 
+    def _get_request_to_json_response(self, formatted_url):
+        response = self._session.get(formatted_url)
+        response = self._validate_response(response)
+        return response.json()
+
+
     def get_playlist_analytics(self, playlist_id):
         self._valid_spotify_ids([playlist_id])
-        response = self._session.get(self._PLAYLIST_URL.format(id=playlist_id))
-        response = self._validate_response(response)
-        playlist = response.json()
+        playlist = self._get_request_to_json_response(self._PLAYLIST_URL.format(id=playlist_id))
 
         self._write_json_content_to_file(playlist, "playlist_base")
 
@@ -237,15 +243,12 @@ class SpotifyHandler:
 
 
     def get_album_analytics(self, album_id):
-        response = self._session.get(self._ALBUM_SINGLE_URL.format(id=album_id))
-        response = self._validate_response(response)
-        album = response.json()
+        album = self._get_request_to_json_response(self._ALBUM_SINGLE_URL.format(id=album_id))
 
         self._write_json_content_to_file(album, "album_single")
 
-        response = self._session.get(self._ALBUM_TRACKS_URL.format(id=album_id))
-        response = self._validate_response(response)
-        album_tracks = self._recurse_all_page_items(response.json())
+        album_content = self._get_request_to_json_response(self._ALBUM_TRACKS_URL.format(id=album_id))
+        album_tracks = self._recurse_all_page_items(album_content)
 
         self._write_json_content_to_file(album_tracks, "album_tracks")
 
@@ -257,20 +260,16 @@ class SpotifyHandler:
         if type not in self._VALID_ARTIST_CONTENT_TYPES:
             raise ValueError(" --  INVALID ARTIST CONTENT TYPE ENTERED.....  -- ")
         
-        response = self._session.get(self._ARTIST_CONTENT_URL.format(id=artist_id, type=type))
-        response = self._validate_response(response)
-        artist_start = response.json()
-        artist_all = self._recurse_all_page_items(artist_start)
+        artist_type = self._get_request_to_json_response(self._ARTIST_CONTENT_URL.format(id=artist_id, type=type))
+        artist_content = self._recurse_all_page_items(artist_type)
 
-        self._write_json_content_to_file(artist_all, "artist")
+        self._write_json_content_to_file(artist_content, "artist")
 
-        return artist_all
+        return artist_content
 
 
     def get_artist_top_tracks(self, artist_id, market="SE"):
-        response = self._session.get(self._ARTIST_TOP_TRACKS.format(id=artist_id, market=market))
-        response = self._validate_response(response)
-        artist_top_tracks = response.json()
+        artist_top_tracks = self._get_request_to_json_response(self._ARTIST_TOP_TRACKS.format(id=artist_id, market=market))
         
         self._write_json_content_to_file(artist_top_tracks, "artist_top_tracks")
 
@@ -278,9 +277,7 @@ class SpotifyHandler:
     
 
     def get_artist_appears_on(self, artist_id):
-        response = self._session.get(self._ARTIST_APPEARS_ON_URL.format(id=artist_id))
-        response = self._validate_response(response)
-        artist_appears_on = response.json()
+        artist_appears_on = self._get_request_to_json_response(self._ARTIST_APPEARS_ON_URL.format(id=artist_id))
 
         self._write_json_content_to_file(artist_appears_on, "appears_on")
 
@@ -291,17 +288,12 @@ class SpotifyHandler:
         if not username:
             raise ValueError("You must enter a username! It cannot be empty...")
 
-        self._renew_token()
-        response = self._session.get(self._USER_PLAYLIST_URL.format(user_id=username))
-        print(response.status_code)
+        playlists = self._get_request_to_json_response(self._USER_PLAYLIST_URL.format(user_id=username))
+        self._write_json_content_to_file(playlists, "user")
 
-        content = response.json()
-        self._write_json_content_to_file(content, "user")
-
-        if response.status_code == 200:
-            playlists = response.json()
+        if "items" in playlists:
             return (playlists["items"], playlists["total"])
-        elif response.status_code == 404:
+        elif "error" in playlists:
             return None
         else:
             raise RuntimeError(f"Unexpected behaviour, error getting user content..., search: {username}")
@@ -309,13 +301,8 @@ class SpotifyHandler:
 
 
     def get_search(self, type, search):
-        response = self._session.get(
-            self._SEARCH_URL,
-            params={"q": search, "type": type, "limit": self._SEARCH_LIMIT}
-        )
-
-        response = self._validate_response(response)
-        results = response.json()
+        req_url = self._SEARCH_URL.format(q=search, type=type, limit=self._SEARCH_LIMIT)
+        results = self._get_request_to_json_response(req_url)
 
         self._write_json_content_to_file(results, "search")
 
