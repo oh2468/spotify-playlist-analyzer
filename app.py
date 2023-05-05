@@ -134,6 +134,9 @@ def album_analysis(album_id):
 
 @app.get("/artist/<artist_id>")
 def artist_lookup(artist_id):
+    if not sp_handler.valid_spoitify_ids([artist_id]):
+        return _return_flash_error(["The entered artist ID format is INVALID..."])
+        
     data = {}
     data["top_tracks"] = sp_handler.get_artist_top_tracks(artist_id)
     data["albums"] = sp_handler.get_artist_content(artist_id, "album")
