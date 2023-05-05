@@ -37,8 +37,10 @@ function expandSearch(event, element) {
 }
 
 function goToUser(event) {
-    console.log(event);
-    console.log(event.target);
+    event.preventDefault();
+    userBase = document.getElementById("user-form").action;
+    user_search = document.getElementById("user_search").value;
+    window.location = userBase + user_search;
 }
 
 function populateMarketSelection(markets) {
