@@ -303,7 +303,7 @@ class SpotifyHandler:
 
 
     def get_search(self, type, search):
-        if not type or not search:
+        if not type in self._VALID_SEARCH_TYPES or not search:
             raise ValueError("type and/or search cannot be empty")
         
         req_url = self._SEARCH_URL.format(q=search, type=type, limit=self._SEARCH_LIMIT)
