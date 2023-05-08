@@ -145,6 +145,7 @@ def artist_lookup(artist_id):
     appears_on, appears_total = sp_handler.get_artist_appears_on(artist_id)
     data["appears_on"] = appears_on
     data["appears_on_total"] = appears_total
+    data["related_artists"] = sp_handler.get_artist_related(artist_id)
     return render_template("artist.html", data=data)
 
 
