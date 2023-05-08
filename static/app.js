@@ -24,16 +24,18 @@ function sortTable(event, element, colNo) {
     sorted.forEach(e => data_table.append(e));
 }
 
-function expandSearch(event, element) {
+function expandNavbar(event, element) {
     //console.log(event);
     //console.log(element);
     var show = element.nextSibling;
-    //console.log(show);
-    var dis = show.style.display;
+
     for(exp of document.getElementsByClassName("menu-expand")) {
-        exp.style.display = "none"
+        if (show == exp) {
+            exp.classList.toggle("hide");
+        } else {
+            exp.classList.add("hide")
+        }
     }
-    show.style.display = dis == "none" ? "" : "none";
 }
 
 function goToUser(event) {
@@ -62,6 +64,16 @@ function setMarket(event) {
     event.target.parentNode.style = "display: None;"
 }
 
+function toggleTabs(event, element) {
+    var myIndex = Array.from(element.parentNode.children).indexOf(element);
+    console.log(myIndex);
+    var tabPages = document.getElementsByClassName("tab-page");
+    for(page of tabPages) {
+        page.classList.add("hide");
+    }
+    tabPages[myIndex].classList.remove("hide");
+}
+
 
 
 document.querySelectorAll("th")
@@ -70,9 +82,13 @@ document.querySelectorAll("th")
     }
 );
 
-
 Array.from(document.getElementsByClassName("menu-item")).forEach(element => {
-    element.addEventListener("click", event => expandSearch(event, element));
+    element.addEventListener("click", event => expandNavbar(event, element));
+  }
+);
+
+Array.from(document.getElementsByClassName("tab-button")).forEach(element => {
+    element.addEventListener("click", event => toggleTabs(event, element));
   }
 );
 
