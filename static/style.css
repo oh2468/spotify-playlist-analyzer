@@ -19,13 +19,12 @@ body {
     margin: 0;
 }
 
+
 .navbar li {
     padding: 1em;
     margin: 0 0 0 -2px;
-    display: block;
     float: left;
     border: 2px dotted lightblue;
-    
 }
 
 .navbar a, .navbar span {
@@ -36,6 +35,10 @@ body {
 .menu-item {
     background-color: black;
     cursor: pointer;
+}
+
+.hide {
+    display: none;
 }
 
 .menu-expand {
@@ -58,7 +61,6 @@ body {
     width: 30%;
     border-radius: 6px;
     background-color: orange;
-    
 }
 
 .content * {
