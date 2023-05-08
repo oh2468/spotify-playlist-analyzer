@@ -286,6 +286,14 @@ class SpotifyHandler:
         return (artist_appears_on["items"], artist_appears_on["total"])
 
 
+    def get_artist_related(self, artist_id):
+        related_artists = self._get_request_to_json_response(self._ARTIST_RELATED.format(id=artist_id))
+
+        self._write_json_content_to_file(related_artists, "artist_related")
+
+        return related_artists["artists"]
+
+
     def get_user_playlists(self, username):
         if not username:
             raise ValueError("You must enter a username! It cannot be empty...")
@@ -299,7 +307,6 @@ class SpotifyHandler:
             return None
         else:
             raise RuntimeError(f"Unexpected behaviour, error getting user content..., search: {username}")
-
 
 
     def get_search(self, type, search):
