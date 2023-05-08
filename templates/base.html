@@ -11,21 +11,21 @@
             <ul>
                 <li class="menu-item"><a href="{{ url_for('index') }}">Home</a></li>
                 <li class="menu-item"><span id="playlist-tag">Search Playlist</a></span>
-                <li class="menu-expand" style="display: none;">
+                <li class="menu-expand hide">
                     <form method="GET" action="/search">
                         <input type="text" name="playlist" id="playlist_search" placeholder="Search for a public playlist" required/>
                         <button>Search</button>
                     </form>
                 </li>
                 <li class="menu-item"><span id="album-tag">Search Album</span>
-                <li class="menu-expand" style="display: none;">
+                <li class="menu-expand hide">
                     <form method="GET" action="/search">
                         <input type="text" name="album" id="album_search" placeholder="Search for an album" required/>
                         <button>Search</button>
                     </form>
                 </li>
                 <li class="menu-item"><span id="artist-tag">Search Artist</span>
-                <li class="menu-expand" style="display: none;">
+                <li class="menu-expand hide">
                         <form method="GET" action="/search">
                             <input type="text" name="artist" id="artist_search" placeholder="Search for an artist" required/>
                             <button>Search</button>
@@ -33,14 +33,14 @@
                     </li>
                 </li>
                 <li class="menu-item"><span id="user-tag">User Playlists</span>
-                <li class="menu-expand" style="display: none;">
+                <li class="menu-expand hide">
                     <form id="user-form" method="GET" action="/user/">
                         <input type="text" name="user" id="user_search" placeholder="View a users public playlists" required pattern="\S+"/>
                         <button>Search</button>
                     </form>
                 </li>
                 <li class="menu-item"><span id="country-tag">Market: </span><span id="current-country">ALL</span>
-                <li class="menu-expand" style="display: none;">
+                <li class="menu-expand hide">
                     <select name="country-select" id="country-select">
                         <option value="">ALL</option>
                     </select>
