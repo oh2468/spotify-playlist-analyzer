@@ -322,7 +322,9 @@ class SpotifyHandler:
         return (results[result_key]["items"], results[result_key]["total"])
 
 
+class InvalidIdFormatError(Exception): pass
 
+class ContentNotFoundError(Exception): pass
 
 
 
