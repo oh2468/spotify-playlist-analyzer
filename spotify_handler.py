@@ -196,6 +196,17 @@ class SpotifyHandler:
         return response.json()
 
 
+    def _input_validator(func):
+        def validator(*args, **kwargs):
+            print("NOW IN THE CUSTOM DECOR")
+            print(args)
+            for arg in args:
+                if not arg:
+                    raise ValueError("You cannot enter empty values.")
+            return func(*args, **kwargs)
+        return validator
+
+
     def get_playlist_analytics(self, playlist_id):
         self._valid_spotify_ids([playlist_id])
         playlist = self._get_request_to_json_response(self._PLAYLIST_URL.format(id=playlist_id))
@@ -294,6 +305,7 @@ class SpotifyHandler:
         return related_artists["artists"]
 
 
+    @_input_validator
     def get_user_playlists(self, username):
         if not username:
             raise ValueError("You must enter a username! It cannot be empty...")
@@ -309,6 +321,7 @@ class SpotifyHandler:
             raise RuntimeError(f"Unexpected behaviour, error getting user content..., search: {username}")
 
 
+    @_input_validator
     def get_search(self, type, search):
         if not type in self._VALID_SEARCH_TYPES or not search:
             raise ValueError("type and/or search cannot be empty")
