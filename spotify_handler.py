@@ -306,9 +306,6 @@ class SpotifyHandler:
 
     @_input_validator
     def get_user_playlists(self, username):
-        # if not username:
-        #     raise ValueError("You must enter a username! It cannot be empty...")
-
         playlists = self._get_request_to_json_response(self._USER_PLAYLIST_URL.format(user_id=username))
         self._write_json_content_to_file(playlists, "user")
 
