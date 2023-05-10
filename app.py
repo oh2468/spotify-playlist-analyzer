@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, abort, flash, session
-from spotify_handler import SpotifyHandler
+from spotify_handler import SpotifyHandler, ContentNotFoundError, InvalidIdFormatError
 from datetime import timedelta
 import country_codes
 
@@ -51,6 +51,17 @@ def _return_flash_error(error_msgs):
 
 def _get_market_from_cookie():
     return request.cookies.get("market", None)
+
+
+def _error_handler(func):
+    def handler(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except InvalidIdFormatError as err:
+            pass
+        except ContentNotFoundError as err:
+            pass
+    return handler
 
 
 @app.get("/")
