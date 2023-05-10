@@ -171,9 +171,10 @@ def user_playlists(username):
         return _return_flash_error([str(err)])
     except ContentNotFoundError as err:
         # no user found with the entered name
+        print(err)
         pass
     
-    return render_template("user.html", data=data)
+    return render_template("user.html", data=data), 404
 
 
 @app.get("/markets")
