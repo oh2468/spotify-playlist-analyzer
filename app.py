@@ -58,9 +58,16 @@ def _error_handler(func):
         try:
             return func(*args, **kwargs)
         except InvalidIdFormatError as err:
-            pass
+            print(err)
+            return _return_flash_error(["Invalid format of the entered spotify ID."])
         except ContentNotFoundError as err:
-            pass
+            msg = str(err)
+            try:
+                msg = err.args[0]["error"]["message"]
+            except (IndexError, KeyError) as err:
+                # the exception failed to include the message, should not happen
+                pass
+            return _return_flash_error([msg])
     return handler
 
 
