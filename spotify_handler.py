@@ -152,11 +152,13 @@ class SpotifyHandler:
         elif response.status_code == 404:
             print("....ERROR....")
             print(response)
+            print(response.json())
             # TODO
             # decide how to handle 404 Not Found - The requested resource could not be found. 
             # This error can be due to a temporary or permanent condition.
             # for now return the response
-            return response
+            #return response
+            raise ContentNotFoundError(response.json())
         else:
             # handle unknown error here
             print(response)
