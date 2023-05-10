@@ -63,15 +63,13 @@ def search():
     try:
         search_type, search_query = list(request.args.items())[0]
     except IndexError:
-        return _return_flash_error(["At least enter something when searching!"])
+        return _return_flash_error(["You seem to be searching incorrectly."])
 
-    if search_type == "user":
-        return redirect(url_for("user_playlists", username=search_query))
+    try:
+        top_results, total = sp_handler.get_search(search_type, search_query)
+    except ValueError as err:
+        return _return_flash_error([str(err)])
 
-    if not sp_handler.valid_search_type(search_type):
-        return _return_flash_error(["You do not appear to be searching the proper way..."])
-
-    top_results, total = sp_handler.get_search(search_type, search_query)
     data = {"results": top_results, "search_query": search_query, "total": total, "search_type": search_type}
     return render_template("search.html", data=data)
 
