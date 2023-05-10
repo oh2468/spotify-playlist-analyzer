@@ -198,8 +198,7 @@ class SpotifyHandler:
 
     def _input_validator(func):
         def validator(*args, **kwargs):
-            print("NOW IN THE CUSTOM DECOR")
-            print(args)
+            # print(f"NOW IN THE CUSTOM DECOR: {args}")
             for arg in args:
                 if not arg:
                     raise ValueError("You cannot enter empty values.")
@@ -307,8 +306,8 @@ class SpotifyHandler:
 
     @_input_validator
     def get_user_playlists(self, username):
-        if not username:
-            raise ValueError("You must enter a username! It cannot be empty...")
+        # if not username:
+        #     raise ValueError("You must enter a username! It cannot be empty...")
 
         playlists = self._get_request_to_json_response(self._USER_PLAYLIST_URL.format(user_id=username))
         self._write_json_content_to_file(playlists, "user")
@@ -323,9 +322,12 @@ class SpotifyHandler:
 
     @_input_validator
     def get_search(self, type, search):
-        if not type in self._VALID_SEARCH_TYPES or not search:
-            raise ValueError("type and/or search cannot be empty")
+        # if not type in self._VALID_SEARCH_TYPES or not search:
+        #     raise ValueError("type and/or search cannot be empty")
         
+        if not type in self._VALID_SEARCH_TYPES:
+            raise ValueError("Invalid search type.")
+
         req_url = self._SEARCH_URL.format(q=search, type=type, limit=self._SEARCH_LIMIT)
         results = self._get_request_to_json_response(req_url)
 
