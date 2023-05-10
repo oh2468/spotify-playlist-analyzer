@@ -168,6 +168,9 @@ def user_playlists(username):
         data["total"] = playlists[1]
     except ValueError as err:
         # empty username 
+        return _return_flash_error([str(err)])
+    except ContentNotFoundError as err:
+        # no user found with the entered name
         pass
     
     return render_template("user.html", data=data)
