@@ -319,9 +319,6 @@ class SpotifyHandler:
 
     @_input_validator
     def get_search(self, type, search):
-        # if not type in self._VALID_SEARCH_TYPES or not search:
-        #     raise ValueError("type and/or search cannot be empty")
-        
         if not type in self._VALID_SEARCH_TYPES:
             raise ValueError("Invalid search type.")
 
