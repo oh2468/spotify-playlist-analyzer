@@ -150,13 +150,14 @@ def single_track_analysis(track_id):
 @app.get("/user/<username>")
 def user_playlists(username):
     data = {"username": username, "user_found": False}
-    playlists = sp_handler.get_user_playlists(username)
-    if playlists is None:
-        return render_template("user.html", data=data)
-    
-    data["user_found"] = True
-    data["playlists"] = playlists[0]
-    data["total"] = playlists[1]
+    try:
+        playlists = sp_handler.get_user_playlists(username)
+        data["user_found"] = True
+        data["playlists"] = playlists[0]
+        data["total"] = playlists[1]
+    except ValueError as err:
+        # empty username 
+        pass
     
     return render_template("user.html", data=data)
 
