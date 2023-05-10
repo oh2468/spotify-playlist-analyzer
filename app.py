@@ -72,8 +72,6 @@ def search():
         return _return_flash_error(["You do not appear to be searching the proper way..."])
 
     top_results, total = sp_handler.get_search(search_type, search_query)
-    # key = f"{search_type}s"
-    # data = {key: top_results, "search_query": search_query, "total": total, "search_type": search_type, "key": key}
     data = {"results": top_results, "search_query": search_query, "total": total, "search_type": search_type}
     return render_template("search.html", data=data)
 
@@ -85,9 +83,7 @@ def analyze_url():
 
     if not (content_id := sp_handler.valid_spotify_urls(type, [url])):
         return _return_flash_error([f"Invalid spotify {type} url format entered."])
-    
-    # audio_featuers = sp_handler.get_playlist_analytics(playlist_id[0])
-    # return _do_analysis(audio_featuers)
+
     if type == "album":
         return redirect(url_for("album_analysis", album_id=content_id[0]))
     
@@ -123,8 +119,6 @@ def playlist_analysis(playlist_id):
 
 @app.get("/album/<album_id>")
 def album_analysis(album_id):
-    #ids = album_ids.split(",")
-    print(album_id)
     if not sp_handler.valid_spoitify_ids([album_id]):
         return _return_flash_error(["The entered album ID format is INVALID... Try again with a correct one!"])
     
