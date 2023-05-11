@@ -223,8 +223,10 @@ class SpotifyHandler:
 
     def _spotify_id_format_validator(func):
         def validator(*args, **kwargs):
-            if not re.match(r"^\w{22}$", args[1]):
-                raise InvalidIdFormatError
+            argz = args[1]
+            for arg in argz if isinstance(argz, list) else [argz]:
+                if not re.match(r"^\w{22}$", arg):
+                    raise InvalidIdFormatError
             return func(*args, **kwargs)
         return validator
 
@@ -246,6 +248,7 @@ class SpotifyHandler:
         return (playlist["name"], track_features_joined, playlist["type"])
 
 
+    @_spotify_id_format_validator
     def get_tracks_analytics(self, track_ids):
         self._valid_spotify_ids(track_ids)
         spotify_tracks = self._loop_requests_with_limit(self._TRACKS_URL, track_ids, self._TRACK_ID_LIMIT)
