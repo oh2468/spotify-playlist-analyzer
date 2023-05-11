@@ -216,6 +216,7 @@ class SpotifyHandler:
         return validator
 
 
+    @_spotify_id_format_validator
     def get_playlist_analytics(self, playlist_id):
         self._valid_spotify_ids([playlist_id])
         playlist = self._get_request_to_json_response(self._PLAYLIST_URL.format(id=playlist_id))
@@ -279,6 +280,7 @@ class SpotifyHandler:
         return (album["name"], self.get_tracks_analytics(track_ids), album["type"])
 
 
+    @_spotify_id_format_validator
     def get_artist_content(self, artist_id, type):
         if type not in self._VALID_ARTIST_CONTENT_TYPES:
             raise ValueError(" --  INVALID ARTIST CONTENT TYPE ENTERED.....  -- ")
@@ -291,6 +293,7 @@ class SpotifyHandler:
         return artist_content
 
 
+    @_spotify_id_format_validator
     def get_artist_top_tracks(self, artist_id, market="SE"):
         artist_top_tracks = self._get_request_to_json_response(self._ARTIST_TOP_TRACKS.format(id=artist_id, market=market))
         
@@ -299,6 +302,7 @@ class SpotifyHandler:
         return artist_top_tracks["tracks"]
     
 
+    @_spotify_id_format_validator
     def get_artist_appears_on(self, artist_id):
         artist_appears_on = self._get_request_to_json_response(self._ARTIST_APPEARS_ON_URL.format(id=artist_id))
 
@@ -307,6 +311,7 @@ class SpotifyHandler:
         return (artist_appears_on["items"], artist_appears_on["total"])
 
 
+    @_spotify_id_format_validator
     def get_artist_related(self, artist_id):
         related_artists = self._get_request_to_json_response(self._ARTIST_RELATED.format(id=artist_id))
 
