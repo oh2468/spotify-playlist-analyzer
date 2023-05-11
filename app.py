@@ -133,8 +133,10 @@ def analyze_text():
 @app.get("/playlist/<playlist_id>")
 @_error_handler
 def playlist_analysis(playlist_id):
-    return _analyze_playlist(playlist_id)
-
+    #return _analyze_playlist(playlist_id)
+    playlist_name, playlist_tracks, type = sp_handler.get_playlist_analytics(playlist_id)
+    return _do_analysis(playlist_tracks, playlist_name, type)
+    
 
 @app.get("/album/<album_id>")
 @_error_handler
