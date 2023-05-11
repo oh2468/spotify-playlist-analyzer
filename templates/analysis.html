@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block content %}
+{% if data.tracks %}
 <table id="analysis-result-table">
     <thead>
         <tr>
@@ -43,4 +44,7 @@
         {% endfor %}
     </tbody>
 </table>
+{% else %}
+<h2 class="center">Could not find any spotify analysis data for the entered id(s).</h2>
+{% endif %}
 {% endblock %}
