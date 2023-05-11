@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, abort, flash, session
 from spotify_handler import SpotifyHandler, ContentNotFoundError, InvalidIdFormatError
 from datetime import timedelta
+from functools import wraps
 import country_codes
 
 
@@ -54,6 +55,7 @@ def _get_market_from_cookie():
 
 
 def _error_handler(func):
+    @wraps(func)
     def handler(*args, **kwargs):
         try:
             return func(*args, **kwargs)
@@ -129,24 +131,21 @@ def analyze_text():
 
 
 @app.get("/playlist/<playlist_id>")
+@_error_handler
 def playlist_analysis(playlist_id):
     return _analyze_playlist(playlist_id)
 
 
 @app.get("/album/<album_id>")
+@_error_handler
 def album_analysis(album_id):
-    if not sp_handler.valid_spoitify_ids([album_id]):
-        return _return_flash_error(["The entered album ID format is INVALID... Try again with a correct one!"])
-    
     album_name, track_data, type = sp_handler.get_album_analytics(album_id)
     return _do_analysis(track_data, album_name, type)
 
 
 @app.get("/artist/<artist_id>")
-def artist_lookup(artist_id):
-    if not sp_handler.valid_spoitify_ids([artist_id]):
-        return _return_flash_error(["The entered artist ID format is INVALID..."])
-        
+@_error_handler
+def artist_lookup(artist_id):     
     data = {}
     data["top_tracks"] = sp_handler.get_artist_top_tracks(artist_id)
     data["albums"] = sp_handler.get_artist_content(artist_id, "album")
@@ -160,6 +159,7 @@ def artist_lookup(artist_id):
 
 
 @app.get("/track/<track_id>")
+@_error_handler
 def single_track_analysis(track_id):
     audio_features = sp_handler.get_tracks_analytics([track_id])
     return _do_analysis(audio_features, "< single track >", "track")
