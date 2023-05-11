@@ -27,15 +27,6 @@ def _do_analysis(tracks, name, type):
     return render_template("analysis.html", data={"tracks": tracks, "name": name, "type": type})
 
 
-def _analyze_playlist(playlist_id):
-    print(playlist_id)
-    try:
-        playlist_name, playlist_tracks, type = sp_handler.get_playlist_analytics(playlist_id)
-    except ValueError as err:
-        abort(404)
-    return _do_analysis(playlist_tracks, playlist_name, type)
-
-
 def _analyze_tracks(track_urls, track_display_title="< individual track urls >"):
     if not (track_ids := sp_handler.valid_spotify_urls("track", track_urls)):
         return _return_flash_error(["Invalid spotify track url(s) entered in the text."])
@@ -134,7 +125,6 @@ def analyze_text():
 @app.get("/playlist/<playlist_id>")
 @_error_handler
 def playlist_analysis(playlist_id):
-    #return _analyze_playlist(playlist_id)
     playlist_name, playlist_tracks, type = sp_handler.get_playlist_analytics(playlist_id)
     return _do_analysis(playlist_tracks, playlist_name, type)
     
