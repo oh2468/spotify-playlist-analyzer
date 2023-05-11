@@ -36,12 +36,12 @@ def _analyze_playlist(playlist_id):
     return _do_analysis(playlist_tracks, playlist_name, type)
 
 
-def _analyze_tracks(track_urls):
+def _analyze_tracks(track_urls, track_display_title="< individual track urls >"):
     if not (track_ids := sp_handler.valid_spotify_urls("track", track_urls)):
         return _return_flash_error(["Invalid spotify track url(s) entered in the text."])
     
     audio_features = sp_handler.get_tracks_analytics(track_ids)
-    return _do_analysis(audio_features, "< individual track urls >", "track")
+    return _do_analysis(audio_features, track_display_title, "track")
 
 
 def _return_flash_error(error_msgs):
@@ -111,13 +111,14 @@ def analyze_url():
 @app.post("/playlist_file")
 def analyze_file():
     playlist_file = request.files["tracks_file"]
+    filename = playlist_file.filename
     file_content = playlist_file.read()
 
     if not file_content:
         return _return_flash_error(["The uploaded file is empty."])
     
     playlist_tracks = [line.strip() for line in file_content.decode().splitlines()]
-    return _analyze_tracks(playlist_tracks)
+    return _analyze_tracks(playlist_tracks, filename)
 
 
 @app.post("/playlist_text")
