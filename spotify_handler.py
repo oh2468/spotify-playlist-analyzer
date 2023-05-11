@@ -147,6 +147,7 @@ class SpotifyHandler:
         elif response.status_code == 401:
             print(response)
             self._renew_token()
+            response.request.headers = self._session.headers
             new_response = self._session.send(response.request)
             return self._validate_response(new_response, tries + 1)
         elif response.status_code == 404:
