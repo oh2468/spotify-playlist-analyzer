@@ -107,7 +107,8 @@ class SpotifyHandler:
         return [url.split("/")[-1] for url in urls] if valid else None
 
 
-    def valid_spoitify_ids(self, ids):
+    @staticmethod
+    def valid_spoitify_ids(ids):
         return all(re.match(r"^\w{22}$", id) for id in ids)
     
 
@@ -214,9 +215,9 @@ class SpotifyHandler:
     def _spotify_id_format_validator(func):
         def validator(*args, **kwargs):
             argz = args[1]
-            for arg in argz if isinstance(argz, list) else [argz]:
-                if not re.match(r"^\w{22}$", arg):
-                    raise InvalidIdFormatError
+            argz = argz if isinstance(argz, list) else [argz]
+            if not __class__.valid_spoitify_ids(argz):
+                raise InvalidIdFormatError
             return func(*args, **kwargs)
         return validator
 
