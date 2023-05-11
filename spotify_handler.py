@@ -115,11 +115,6 @@ class SpotifyHandler:
         return type in self._VALID_SEARCH_TYPES
 
     
-    def _valid_spotify_ids(self, ids):
-        if not all(re.match(r"^\w{22}$", id) is not None for id in ids):
-            raise ValueError("Invalid spotify id(s) entered")
-
-    
     def _loop_requests_with_limit(self, base_url, track_ids, max):
         result = []
         for i in range(0, len(track_ids), max):
@@ -132,10 +127,6 @@ class SpotifyHandler:
         audio_features = self._loop_requests_with_limit(self._AUDIO_FEATURES_URL, track_ids, self._AUDIO_FEATURE_LIMIT)
         self._write_json_content_to_file(audio_features, "audio_features")
         return audio_features
-
-
-    def _analyze_tracks(self, tracks):
-        pass
 
 
     def _validate_response(self, response, tries=0):
@@ -213,7 +204,6 @@ class SpotifyHandler:
 
     def _input_validator(func):
         def validator(*args, **kwargs):
-            # print(f"NOW IN THE CUSTOM DECOR: {args}")
             for arg in args:
                 if not arg:
                     raise ValueError("You cannot enter empty values.")
@@ -233,7 +223,6 @@ class SpotifyHandler:
 
     @_spotify_id_format_validator
     def get_playlist_analytics(self, playlist_id):
-        self._valid_spotify_ids([playlist_id])
         playlist = self._get_request_to_json_response(self._PLAYLIST_URL.format(id=playlist_id))
 
         self._write_json_content_to_file(playlist, "playlist_base")
@@ -250,7 +239,6 @@ class SpotifyHandler:
 
     @_spotify_id_format_validator
     def get_tracks_analytics(self, track_ids):
-        self._valid_spotify_ids(track_ids)
         spotify_tracks = self._loop_requests_with_limit(self._TRACKS_URL, track_ids, self._TRACK_ID_LIMIT)
         
         self._write_json_content_to_file(spotify_tracks, "tracks")
@@ -340,13 +328,7 @@ class SpotifyHandler:
     def get_user_playlists(self, username):
         playlists = self._get_request_to_json_response(self._USER_PLAYLIST_URL.format(user_id=username))
         self._write_json_content_to_file(playlists, "user")
-
-        if "items" in playlists:
-            return (playlists["items"], playlists["total"])
-        elif "error" in playlists:
-            return None
-        else:
-            raise RuntimeError(f"Unexpected behaviour, error getting user content..., search: {username}")
+        return (playlists["items"], playlists["total"])
 
 
     @_input_validator
@@ -366,36 +348,4 @@ class SpotifyHandler:
 class InvalidIdFormatError(Exception): pass
 
 class ContentNotFoundError(Exception): pass
-
-
-
-"""
-"""
-
-        # audio_features = []
-        # max = self._AUDIO_FEATURE_LIMIT
-        # for i in range(0, len(track_ids), max):
-        #     response = self._session.get(self._AUDIO_FEATURES_URL.format(ids=",".join(track_ids[i:i + max])))
-        #     response = self._validate_response(response)
-        #     audio_features += response.json()["audio_features"]
-
-
-        
-        # first_playlist = playlists["playlists"]["items"][0]
-        # tracks_url = first_playlist["tracks"]["href"]
-
-        # response = self._session.get(tracks_url)
-        # response = self._validate_response(response)
-
-        # tracks = response.json()
-
-        # with open("spotify_responses/playlist.json", "w", encoding="UTF-8") as file:
-        #     json.dump(tracks, file)
-        
-
-        # track_ids = [track["track"]["id"] for track in tracks["items"]]
-
-        # audio_features = self._get_audio_features(track_ids)
-
-        #return (playlists["playlists"]["items"], playlists["playlists"]["total"])
 
