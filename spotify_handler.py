@@ -193,6 +193,18 @@ class SpotifyHandler:
 
 
     def _get_request_to_json_response(self, formatted_url):
+        # BUG
+        # TODO
+        # Handle the following:
+        # raise RemoteDisconnected("Remote end closed connection without"
+        # http.client.RemoteDisconnected: Remote end closed connection without response
+        #
+        # raise RemoteDisconnected("Remote end closed connection without"
+        # http.client.RemoteDisconnected: Remote end closed connection without response
+        #
+        # raise ConnectionError(err, request=request)
+        # requests.exceptions.ConnectionError: 
+        # ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
         response = self._session.get(formatted_url)
         response = self._validate_response(response)
         return response.json()
