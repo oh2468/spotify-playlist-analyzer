@@ -57,16 +57,23 @@ function populateMarketSelection(markets) {
         option.setAttribute("value", m["code"]);
         option.text = m["name"];
         marketDropDown.add(option);
-    })
+    });
+    console.log(document.cookie);
+    currMarket = document.cookie.split("market=")[1].split(";")[0];
+    console.log(currMarket);
+    if(currMarket) {
+        document.getElementById("current-country").innerText = currMarket;
+    }
 }
 
 function setMarket(event) {
-    //console.log(event);
     market = event.target.value;
-    document.cookie = "market=" + market + "; SameSite=Strict; Secure";
+    console.log(market);
+    document.cookie = "market=" + market + "; SameSite=Strict; Secure; path=/";
+    console.log(document.cookie);
     var marketTag = document.getElementById("current-country");
     marketTag.innerText = market;
-    event.target.parentNode.style = "display: None;"
+    event.target.parentNode.classList.add("hide");
 }
 
 function toggleTabs(event, element) {
