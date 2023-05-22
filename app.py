@@ -44,7 +44,8 @@ def _return_flash_error(error_msgs):
 
 
 def _get_market_from_cookie():
-    return request.cookies.get("market", None)
+    user_market = request.cookies.get("market", None)
+    return user_market if user_market in country_codes.code_to_name else None
 
 
 def _error_handler(func):
@@ -79,7 +80,7 @@ def search():
         return _return_flash_error(["You seem to be searching incorrectly."])
 
     try:
-        top_results, total = sp_handler.get_search(search_type, search_query)
+        top_results, total = sp_handler.get_search(search_type, search_query, market=_get_market_from_cookie())
     except ValueError as err:
         return _return_flash_error([str(err)])
 
@@ -127,26 +128,27 @@ def analyze_text():
 @app.get("/playlist/<playlist_id>")
 @_error_handler
 def playlist_analysis(playlist_id):
-    playlist_name, playlist_tracks, type = sp_handler.get_playlist_analytics(playlist_id)
+    playlist_name, playlist_tracks, type = sp_handler.get_playlist_analytics(playlist_id, market=_get_market_from_cookie())
     return _do_analysis(playlist_tracks, playlist_name, type)
     
 
 @app.get("/album/<album_id>")
 @_error_handler
 def album_analysis(album_id):
-    album_name, track_data, type = sp_handler.get_album_analytics(album_id)
+    album_name, track_data, type = sp_handler.get_album_analytics(album_id, market=_get_market_from_cookie())
     return _do_analysis(track_data, album_name, type)
 
 
 @app.get("/artist/<artist_id>")
 @_error_handler
-def artist_lookup(artist_id):     
+def artist_lookup(artist_id):
+    market = _get_market_from_cookie()
     data = {}
-    data["top_tracks"] = sp_handler.get_artist_top_tracks(artist_id)
-    data["albums"] = sp_handler.get_artist_content(artist_id, "album")
-    data["singles"] = sp_handler.get_artist_content(artist_id, "single")
-    data["compilations"] = sp_handler.get_artist_content(artist_id, "compilation")
-    appears_on, appears_total = sp_handler.get_artist_appears_on(artist_id)
+    data["top_tracks"] = sp_handler.get_artist_top_tracks(artist_id, market=market)
+    data["albums"] = sp_handler.get_artist_content(artist_id, "album", market=market)
+    data["singles"] = sp_handler.get_artist_content(artist_id, "single", market=market)
+    data["compilations"] = sp_handler.get_artist_content(artist_id, "compilation", market=market)
+    appears_on, appears_total = sp_handler.get_artist_appears_on(artist_id, market=market)
     data["appears_on"] = appears_on
     data["appears_on_total"] = appears_total
     data["related_artists"] = sp_handler.get_artist_related(artist_id)
@@ -156,7 +158,7 @@ def artist_lookup(artist_id):
 @app.get("/track/<track_id>")
 @_error_handler
 def single_track_analysis(track_id):
-    audio_features = sp_handler.get_tracks_analytics([track_id])
+    audio_features = sp_handler.get_tracks_analytics([track_id], market=_get_market_from_cookie())
     return _do_analysis(audio_features, "< single track >", "track")
 
 
@@ -164,7 +166,7 @@ def single_track_analysis(track_id):
 def user_playlists(username):
     data = {"username": username, "user_found": False}
     try:
-        playlists = sp_handler.get_user_playlists(username)
+        playlists = sp_handler.get_user_playlists(username, market=_get_market_from_cookie())
         data["user_found"] = True
         data["playlists"] = playlists[0]
         data["total"] = playlists[1]
