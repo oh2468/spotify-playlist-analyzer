@@ -4,6 +4,7 @@
         <title>SPA - {% block title %}{% endblock %}</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
         <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+        <meta name="viewport" content="width=device-width" />
     </head>
     
     <body>
@@ -48,7 +49,7 @@
             </ul>
         </div>
     
-        <div class="content">
+        <div class="content center">
             <header>
                 {% with messages = get_flashed_messages() %}
                     {% if messages %}
