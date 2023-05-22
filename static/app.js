@@ -25,8 +25,13 @@ function sortTable(event, element, colNo) {
 }
 
 function expandNavbar(event, element) {
-    //console.log(event);
-    //console.log(element);
+    // console.log(event);
+    // console.log(element);
+
+    if(element.firstChild.tagName == "A") {
+       return element.firstChild.click();
+    } 
+
     var show = element.nextSibling;
 
     for(exp of document.getElementsByClassName("menu-expand")) {
@@ -66,14 +71,25 @@ function setMarket(event) {
 
 function toggleTabs(event, element) {
     var myIndex = Array.from(element.parentNode.children).indexOf(element);
-    console.log(myIndex);
+    // console.log(myIndex);
     var tabPages = document.getElementsByClassName("tab-page");
+    
     for(page of tabPages) {
         page.classList.add("hide");
     }
+
     tabPages[myIndex].classList.remove("hide");
+
+    for(btn of document.getElementsByClassName("tab-button")) {
+        btn.classList.remove("active");
+    }
+
+    element.classList.add("active");
 }
 
+// function displayChartData(event, element) {
+//     console.log(element);
+// }
 
 
 document.querySelectorAll("th")
@@ -91,6 +107,12 @@ Array.from(document.getElementsByClassName("tab-button")).forEach(element => {
     element.addEventListener("click", event => toggleTabs(event, element));
   }
 );
+
+// Array.from(document.getElementsByClassName("dots")).forEach(element => {
+//     element.addEventListener("click", event => displayChartData(event, element));
+//   }
+// );
+
 
 document.getElementById("user-form").addEventListener("submit", event => goToUser(event));
 document.getElementById("country-select").addEventListener("change", event => setMarket(event));
