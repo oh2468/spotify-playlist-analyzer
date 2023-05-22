@@ -28,7 +28,8 @@ table {
     table-layout: auto;
     width: 100%;
     background-color: white;
-    word-break: break-word;
+    /* word-break: break-word; */
+    word-break: normal;
 }
 
 th {
