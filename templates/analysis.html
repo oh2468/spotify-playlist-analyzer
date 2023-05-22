@@ -6,45 +6,68 @@
 
 {% block content %}
 {% if data.tracks %}
-<table id="analysis-result-table">
-    <thead>
-        <tr>
-            <th value="number">No.</th>
-            <th value="string">Title</th>
-            <th value="string">Artist</th>
-            <th value="string">Album</th>
-            <!-- <th value="string">Genre</th> -->
-            <th value="string">Duration</th>
-            <th value="number">Popularity</th>
-            <th value="number">BPM</th>
-            <th value="number">Danceability</th>
-            <th value="number">Energy</th>
-            <th value="number">Valence</th>
-            <th value="number">Key</th>
-            <th value="string">Id</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for tr in data.tracks %}
-        <tr>
-            <td>{{ loop.index }}</td>
-            <td>{{ tr["track"]["name"] }}</td>
-            <td>{{ tr["track"]["artists"]|format_artists }}</td>
-            <td>{{ tr["track"]["album"]["name"] }}</td>
-            <!-- <td>{{ tr["track"]["is_local"] }}</td> -->
-            <td>{{ tr["track"]["duration_ms"] | format_time }}</td>
-            <td>{{ tr["track"]["popularity"] }}</td>
-            <td>{{ tr["audio_feature"]["tempo"]|round|int }}</td>
-            <td>{{ tr["audio_feature"]["danceability"] }}</td>
-            <td>{{ tr["audio_feature"]["energy"] }}</td>
-            <td>{{ tr["audio_feature"]["valence"] }}</td>
-            <td>{{ tr["audio_feature"]["key"] }}</td>
-            <td>{{ tr["audio_feature"]["id"] }}</td>
-        </tr>
+<div class="tab-area">
+    <div class="tab-buttons">
+        <button class="tab-button active">Song Table</button>
+        {% for key, value in data.charts.items() if value %}
+        <button class="tab-button">{{ key }}</button>    
         {% endfor %}
-    </tbody>
-</table>
+    </div>
+    
+    <div class="tab-content">
+        <div class="tab-page">
+            <table id="analysis-result-table">
+                <thead>
+                    <tr>
+                        <th value="number">No.</th>
+                        <th value="string">Title</th>
+                        <th value="string">Artist</th>
+                        <th value="string">Album</th>
+                        <!-- <th value="string">Genre</th> -->
+                        <th value="string">Duration</th>
+                        <th value="number">Popularity</th>
+                        <th value="number">BPM</th>
+                        <th value="number">Danceability</th>
+                        <th value="number">Energy</th>
+                        <th value="number">Valence</th>
+                        <th value="number">Key</th>
+                        <th value="string">Id</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tr in data.tracks %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ tr["track"]["name"] }}</td>
+                        <td>{{ tr["track"]["artists"]|format_artists }}</td>
+                        <td>{{ tr["track"]["album"]["name"] }}</td>
+                        <!-- <td>{{ tr["track"]["is_local"] }}</td> -->
+                        <td>{{ tr["track"]["duration_ms"] | format_time }}</td>
+                        <td>{{ tr["track"]["popularity"] }}</td>
+                        <td>{{ tr["audio_feature"]["tempo"]|round|int }}</td>
+                        <td>{{ tr["audio_feature"]["danceability"] }}</td>
+                        <td>{{ tr["audio_feature"]["energy"] }}</td>
+                        <td>{{ tr["audio_feature"]["valence"] }}</td>
+                        <td>{{ tr["audio_feature"]["key"] }}</td>
+                        <td>{{ tr["audio_feature"]["id"] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        {% for key, charts in data.charts.items() if charts %}
+        <div class="tab-page hide">
+            {% for chart in charts %}
+            <div class="data-chart">
+                <embed type="image/svg+xml" src="{{ chart|safe }}"/>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
 {% else %}
-<h2 class="center">Could not find any spotify analysis data for the entered id(s).</h2>
+<h2>Could not find any spotify analysis data for the entered id(s).</h2>
 {% endif %}
 {% endblock %}
