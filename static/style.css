@@ -1,3 +1,4 @@
+/* Style the document */
 * {
     box-sizing: border-box;
 }
@@ -8,8 +9,65 @@ body {
     background-color: limegreen;
 }
 
+.hide {
+    display: none;
+}
+
+.center {
+    text-align: center;
+}
+
+
+/* Style the tables  */
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+table {
+    table-layout: auto;
+    width: 100%;
+    background-color: white;
+    word-break: break-word;
+}
+
+th {
+    background-color: white;
+    height: 3em;
+    font-size: 1.2em;
+    width: auto;
+    padding: 0 0.5em;
+}
+
+tbody tr:nth-of-type(odd) {
+    background-color: lightsalmon;
+}
+
+tbody tr:nth-of-type(even) {
+    background-color: lightcyan;
+}
+
+/* tbody td:last-child {
+    background-color: white;
+} */
+
+td {
+    padding: 0.5em;
+}
+
+table button {
+    background-color: black;
+    color: white;
+    border-radius: 6px;
+    border: 1px solid black;
+}
+
+
+/* Style the navbar */
 .navbar {
+    background-clip: content-box;
     background-color: lightblue;
+    padding: 0 1%;
 }
 
 .navbar > ul {
@@ -18,7 +76,6 @@ body {
     padding: 0;
     margin: 0;
 }
-
 
 .navbar li {
     padding: 1em;
@@ -35,10 +92,6 @@ body {
 .menu-item {
     background-color: black;
     cursor: pointer;
-}
-
-.hide {
-    display: none;
 }
 
 .menu-expand {
@@ -63,18 +116,47 @@ body {
     background-color: orange;
 }
 
-.content * {
-    margin: auto;
-    padding: 0 1%;
+
+/* Style the main body content */
+.content {
+    /* margin: auto; */
+    padding: 0 1% 1% 1%;
 }
 
-.content > header * {
-    text-align: center;
+.content > header {
     padding: 1em;
+    margin: 0;
+    background-color: purple;
+    color: navajowhite;
 }
 
+.playlist-input {
+    background-color: lightblue;
+    padding-bottom: 2%;
+}
+
+.playlist-input > form > label {
+    font-weight: bolder;
+    font-size: 1.3em;
+}
+
+.playlist-input > form * {
+    padding: 0.5em 0;
+    display: block;
+    width: 50%;
+    margin: auto;
+}
+
+.playlist-input > form > button {
+    background-color: orange;
+    border-radius: 12px;
+    width: 40%;
+}
+
+
+/* Style the error messages */
 .flashes * {
-    color: maroon;
+    color: red;
     font-weight: bolder;
 }
 
@@ -84,45 +166,67 @@ body {
     font-size: larger;
 }
 
-.content > form > label {
-    text-align: center;
-    font-weight: bolder;
-}
-
-.content > form * {
-    padding: 0.5em 0;
-    display: block;
-    width: 50%;
-}
-
-.content > form > button {
-    background-color: orange;
-    border-radius: 12px;
-    width: 40%;
-}
-
-table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-    background-color: white;
-}
-
-.content td {
-    padding: 0.5em;
-}
-
-.content table {
-    padding: 0.5em 0.5em;
-}
-
 #search-query {
     color: orange;
 }
 
-.center {
-    text-align: center;
-}
 
 #current-country {
     color: yellow;
+}
+
+
+/* Style the analysis charts */
+.data-chart {
+    width: 60%;
+    margin: auto;
+}
+
+
+/* Style the tab button row and the tab buttons  */
+.tab-buttons {
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+.tab-button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+}
+
+.tab-button:hover {
+    background-color: #ddd;
+}
+
+.tab-button.active {
+    background-color: blue;
+}
+
+
+/* Style the tab content */
+.tab-content {
+    padding: 0;
+}
+
+.tab-page {
+    /* background-color: steelblue; */
+    background-color: lightblue;
+    padding: 0;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+
+/* Style responsive elements based on screen width */
+@media screen and (max-width:1050px){
+    .menu-expand, .data-chart {
+        width: 100%;
+    }
 }
