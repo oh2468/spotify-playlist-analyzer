@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, abort, fla
 from spotify_handler import SpotifyHandler, ContentNotFoundError, InvalidIdFormatError
 from datetime import timedelta
 from functools import wraps
+import playlist_analyzer
 import country_codes
 
 
@@ -9,12 +10,13 @@ app = Flask(__name__)
 app.secret_key = "RANDOMSECRETKEY1"
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024 # max file size = 2MB
 sp_handler = SpotifyHandler()
-#sp_handler = None
+# sp_handler = None
 
 
 @app.template_filter("format_time")
 def format_time(t):
-    return str(timedelta(milliseconds=t)).split(".")[0]
+    # return str(timedelta(milliseconds=t)).split(".")[0]
+    return playlist_analyzer.time_formatter(t)
 
 
 @app.template_filter("format_artists")
@@ -23,8 +25,8 @@ def format_artists(artists):
 
 
 def _do_analysis(tracks, name, type):
-    # do picture analyzis
-    return render_template("analysis.html", data={"tracks": tracks, "name": name, "type": type})
+    _, charts = playlist_analyzer.test_chart_making(tracks)
+    return render_template("analysis.html", data={"tracks": tracks, "charts": charts, "name": name, "type": type})
 
 
 def _analyze_tracks(track_urls, track_display_title="< individual track urls >"):
@@ -179,10 +181,16 @@ def user_playlists(username):
 
 @app.get("/markets")
 def get_markets():
+    if sp_handler is None: return ""
     spotify_markets = sp_handler.markets
     mapped_markets = [{"code": code, "name": country_codes.code_to_name.get(code, code)} for code in spotify_markets]
     return mapped_markets
 
+
+@app.get("/test")
+def testing_charts():
+    data, charts = playlist_analyzer.test_chart_making(None)
+    return render_template("analysis.html", data={"tracks": data, "charts": charts, "name": "TESTING CHARTS", "type": "WHAT TYPE"})
 
 
 @app.errorhandler(404)
