@@ -25,7 +25,7 @@ class SpotifyHandler:
     _ARTIST_CONTENT_URL = "https://api.spotify.com/v1/artists/{id}/albums?include_groups={type}&limit=50" #MARKET
     _ARTIST_APPEARS_ON_URL = "https://api.spotify.com/v1/artists/{id}/albums?include_groups=appears_on" #MARKET
     _ARTIST_RELATED = "https://api.spotify.com/v1/artists/{id}/related-artists" #NOMARKET
-    _ARTIST_TOP_TRACKS = "https://api.spotify.com/v1/artists/{id}/top-tracks?market={market}" #MARKET (required?)
+    _ARTIST_TOP_TRACKS = "https://api.spotify.com/v1/artists/{id}/top-tracks" #MARKET (required?)
     _SPOTIFY_MARKETS_URL = "https://api.spotify.com/v1/markets"
     _AUDIO_FEATURE_LIMIT = 50
     _TRACK_ID_LIMIT = 50
@@ -116,10 +116,10 @@ class SpotifyHandler:
         return type in self._VALID_SEARCH_TYPES
 
     
-    def _loop_requests_with_limit(self, base_url, track_ids, max):
+    def _loop_requests_with_limit(self, base_url, track_ids, max, market=None):
         result = []
         for i in range(0, len(track_ids), max):
-            content = self._get_request_to_json_response(base_url.format(ids=",".join(track_ids[i:i + max])))
+            content = self._get_request_to_json_response(base_url.format(ids=",".join(track_ids[i:i + max])), market)
             result += list(content.values())[0]
         return result
 
@@ -158,14 +158,14 @@ class SpotifyHandler:
             return None
 
 
-    def _recurse_all_page_items(self, data):
+    def _recurse_all_page_items(self, data, market=None):
         print("iterating pages")
         if not data["next"]:
             return data["items"]
         else:
             items = data["items"]
-            content = self._get_request_to_json_response(data["next"])
-            return items + self._recurse_all_page_items(content)
+            content = self._get_request_to_json_response(data["next"], market)
+            return items + self._recurse_all_page_items(content, market)
 
 
     def _write_json_content_to_file(self, content, filename):
@@ -185,7 +185,7 @@ class SpotifyHandler:
         return True
 
 
-    def _get_request_to_json_response(self, formatted_url):
+    def _get_request_to_json_response(self, formatted_url, market=None):
         # BUG
         # TODO
         # Handle the following:
@@ -198,6 +198,12 @@ class SpotifyHandler:
         # raise ConnectionError(err, request=request)
         # requests.exceptions.ConnectionError: 
         # ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+        if market:
+            add_market = f"&market={market}" if "?" in formatted_url else f"?market={market}"
+            formatted_url = f"{formatted_url}{add_market}"
+        
+        print(formatted_url)
+        
         response = self._session.get(formatted_url)
         response = self._validate_response(response)
         return response.json()
@@ -223,12 +229,12 @@ class SpotifyHandler:
 
 
     @_spotify_id_format_validator
-    def get_playlist_analytics(self, playlist_id):
-        playlist = self._get_request_to_json_response(self._PLAYLIST_URL.format(id=playlist_id))
+    def get_playlist_analytics(self, playlist_id, market=None):
+        playlist = self._get_request_to_json_response(self._PLAYLIST_URL.format(id=playlist_id), market)
 
         self._write_json_content_to_file(playlist, "playlist_base")
 
-        spotify_tracks = self._recurse_all_page_items(playlist["tracks"])
+        spotify_tracks = self._recurse_all_page_items(playlist["tracks"], market)
         tracks_dict = {track["track"]["id"]: track for track in spotify_tracks}
         tracks_audio_features = self._get_audio_features(list(tracks_dict.keys()))
 
@@ -239,8 +245,8 @@ class SpotifyHandler:
 
 
     @_spotify_id_format_validator
-    def get_tracks_analytics(self, track_ids):
-        spotify_tracks = self._loop_requests_with_limit(self._TRACKS_URL, track_ids, self._TRACK_ID_LIMIT)
+    def get_tracks_analytics(self, track_ids, market=None):
+        spotify_tracks = self._loop_requests_with_limit(self._TRACKS_URL, track_ids, self._TRACK_ID_LIMIT, market)
         
         self._write_json_content_to_file(spotify_tracks, "tracks")
 
@@ -271,27 +277,27 @@ class SpotifyHandler:
 
 
     @_spotify_id_format_validator
-    def get_album_analytics(self, album_id):
-        album = self._get_request_to_json_response(self._ALBUM_SINGLE_URL.format(id=album_id))
+    def get_album_analytics(self, album_id, market=None):
+        album = self._get_request_to_json_response(self._ALBUM_SINGLE_URL.format(id=album_id), market)
 
         self._write_json_content_to_file(album, "album_single")
 
-        album_content = self._get_request_to_json_response(self._ALBUM_TRACKS_URL.format(id=album_id))
-        album_tracks = self._recurse_all_page_items(album_content)
+        album_content = self._get_request_to_json_response(self._ALBUM_TRACKS_URL.format(id=album_id), market)
+        album_tracks = self._recurse_all_page_items(album_content, market)
 
         self._write_json_content_to_file(album_tracks, "album_tracks")
 
         track_ids = [track["id"] for track in album_tracks]
-        return (album["name"], self.get_tracks_analytics(track_ids), album["type"])
+        return (album["name"], self.get_tracks_analytics(track_ids, market), album["type"])
 
 
     @_spotify_id_format_validator
-    def get_artist_content(self, artist_id, type):
+    def get_artist_content(self, artist_id, type, market=None):
         if type not in self._VALID_ARTIST_CONTENT_TYPES:
             raise ValueError(" --  INVALID ARTIST CONTENT TYPE ENTERED.....  -- ")
         
-        artist_type = self._get_request_to_json_response(self._ARTIST_CONTENT_URL.format(id=artist_id, type=type))
-        artist_content = self._recurse_all_page_items(artist_type)
+        artist_type = self._get_request_to_json_response(self._ARTIST_CONTENT_URL.format(id=artist_id, type=type), market)
+        artist_content = self._recurse_all_page_items(artist_type, market)
 
         self._write_json_content_to_file(artist_content, "artist")
 
@@ -300,7 +306,7 @@ class SpotifyHandler:
 
     @_spotify_id_format_validator
     def get_artist_top_tracks(self, artist_id, market="SE"):
-        artist_top_tracks = self._get_request_to_json_response(self._ARTIST_TOP_TRACKS.format(id=artist_id, market=market))
+        artist_top_tracks = self._get_request_to_json_response(self._ARTIST_TOP_TRACKS.format(id=artist_id), market)
         
         self._write_json_content_to_file(artist_top_tracks, "artist_top_tracks")
 
@@ -308,8 +314,8 @@ class SpotifyHandler:
     
 
     @_spotify_id_format_validator
-    def get_artist_appears_on(self, artist_id):
-        artist_appears_on = self._get_request_to_json_response(self._ARTIST_APPEARS_ON_URL.format(id=artist_id))
+    def get_artist_appears_on(self, artist_id, market=None):
+        artist_appears_on = self._get_request_to_json_response(self._ARTIST_APPEARS_ON_URL.format(id=artist_id), market)
 
         self._write_json_content_to_file(artist_appears_on, "appears_on")
 
@@ -326,19 +332,19 @@ class SpotifyHandler:
 
 
     @_input_validator
-    def get_user_playlists(self, username):
-        playlists = self._get_request_to_json_response(self._USER_PLAYLIST_URL.format(user_id=username))
+    def get_user_playlists(self, username, market=None):
+        playlists = self._get_request_to_json_response(self._USER_PLAYLIST_URL.format(user_id=username), market)
         self._write_json_content_to_file(playlists, "user")
         return (playlists["items"], playlists["total"])
 
 
     @_input_validator
-    def get_search(self, type, search):
+    def get_search(self, type, search, market=None):
         if not type in self._VALID_SEARCH_TYPES:
             raise ValueError("Invalid search type.")
 
         req_url = self._SEARCH_URL.format(q=search, type=type, limit=self._SEARCH_LIMIT)
-        results = self._get_request_to_json_response(req_url)
+        results = self._get_request_to_json_response(req_url, market)
 
         self._write_json_content_to_file(results, "search")
 
