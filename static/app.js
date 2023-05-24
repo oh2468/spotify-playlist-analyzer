@@ -62,7 +62,7 @@ function setMarket(event) {
     var market = option.value;
     var marketIndex = option.selectedIndex;
 
-    document.cookie = "market=" + market + "; SameSite=Strict; Secure; Path=/; Max-Age=40";
+    document.cookie = "market=" + market + "; SameSite=Strict; Secure; Path=/; Max-Age=3600";
     option.parentNode.classList.add("hide");
 
     updateSelectedMarket(option.children, marketIndex);
