@@ -33,7 +33,7 @@ def _analyze_tracks(track_urls, track_display_title="< individual track urls >")
     if not (track_ids := sp_handler.valid_spotify_urls("track", track_urls)):
         return _return_flash_error(["Invalid spotify track url(s) entered in the text."])
     
-    audio_features = sp_handler.get_tracks_analytics(track_ids)
+    audio_features = sp_handler.get_tracks_analytics(track_ids, market=_get_market_from_cookie())
     return _do_analysis(audio_features, track_display_title, "track")
 
 
