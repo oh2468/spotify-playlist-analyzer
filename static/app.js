@@ -3,10 +3,7 @@ var previous_column_sort;
 
 
 function sortTable(event, element, colNo) {
-    //var data_table = document.getElementById("analysis-result-table").querySelector("tbody");
-    //console.log(event);
     var data_table = event.target.closest("table").querySelector("tbody");
-    //console.log(data_table);
     column_sort_toggle = previous_column_sort === colNo ? !column_sort_toggle : false;
     previous_column_sort = colNo;
 
@@ -25,9 +22,6 @@ function sortTable(event, element, colNo) {
 }
 
 function expandNavbar(event, element) {
-    // console.log(event);
-    // console.log(element);
-
     if(element.firstChild.tagName == "A") {
        return element.firstChild.click();
     } 
@@ -52,33 +46,56 @@ function goToUser(event) {
 
 function populateMarketSelection(markets) {
     var marketDropDown = document.getElementById("country-select");
+
     markets.forEach(m => {
         var option = document.createElement("option");
         option.setAttribute("value", m["code"]);
         option.text = m["name"];
         marketDropDown.add(option);
     });
-    console.log(document.cookie);
-    currMarket = document.cookie.split("market=")[1].split(";")[0];
-    console.log(currMarket);
-    if(currMarket) {
-        document.getElementById("current-country").innerText = currMarket;
-    }
+
+    updateSelectedMarket(marketDropDown.children, null);
 }
 
 function setMarket(event) {
-    market = event.target.value;
-    console.log(market);
-    document.cookie = "market=" + market + "; SameSite=Strict; Secure; path=/";
-    console.log(document.cookie);
+    var option = event.target;
+    var market = option.value;
+    var marketIndex = option.selectedIndex;
+
+    document.cookie = "market=" + market + "; SameSite=Strict; Secure; Path=/; Max-Age=40";
+    option.parentNode.classList.add("hide");
+
+    updateSelectedMarket(option.children, marketIndex);
+}
+
+function updateSelectedMarket(marketList, newIndex) {
+    var oldIndex = sessionStorage.getItem("selectedMarketIndex");
+    var cookie = document.cookie;
+
+    if(oldIndex === null && cookie) {
+        var currMarket = cookie.split("market=")[1].split(";")[0];
+        for(market of marketList) {
+            if(market.value === currMarket) {
+                oldIndex = market.index;
+                break;
+            }
+        }
+    }
+
+    oldIndex = oldIndex !== null  && cookie ? oldIndex : 0;
+    newIndex = newIndex !== null ? newIndex : oldIndex;
+
+    sessionStorage.setItem("selectedMarketIndex", newIndex);
+
+    marketList[oldIndex].removeAttribute("selected");
+    marketList[newIndex].setAttribute("selected", "");
+
     var marketTag = document.getElementById("current-country");
-    marketTag.innerText = market;
-    event.target.parentNode.classList.add("hide");
+    marketTag.innerText = marketList[newIndex].value;
 }
 
 function toggleTabs(event, element) {
     var myIndex = Array.from(element.parentNode.children).indexOf(element);
-    // console.log(myIndex);
     var tabPages = document.getElementsByClassName("tab-page");
     
     for(page of tabPages) {
@@ -93,10 +110,6 @@ function toggleTabs(event, element) {
 
     element.classList.add("active");
 }
-
-// function displayChartData(event, element) {
-//     console.log(element);
-// }
 
 
 document.querySelectorAll("th")
@@ -115,17 +128,12 @@ Array.from(document.getElementsByClassName("tab-button")).forEach(element => {
   }
 );
 
-// Array.from(document.getElementsByClassName("dots")).forEach(element => {
-//     element.addEventListener("click", event => displayChartData(event, element));
-//   }
-// );
-
 
 document.getElementById("user-form").addEventListener("submit", event => goToUser(event));
 document.getElementById("country-select").addEventListener("change", event => setMarket(event));
 
 document.addEventListener("DOMContentLoaded", () => {
-    markets = sessionStorage.getItem("markets")
+    markets = sessionStorage.getItem("markets");
     if(markets) {
         populateMarketSelection(JSON.parse(markets));
     } else {
