@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<div>
+<div class="table-container">
     <table id="search-result-table">
     {% with results = data.results %}
         {% include "data_tables/" + data.search_type + ".html" %}
