@@ -305,7 +305,10 @@ class SpotifyHandler:
 
 
     @_spotify_id_format_validator
-    def get_artist_top_tracks(self, artist_id, *, market="SE"):
+    def get_artist_top_tracks(self, artist_id, *, market=None):
+        if not market:
+            market = "SE"
+        
         artist_top_tracks = self._get_request_to_json_response(self._ARTIST_TOP_TRACKS.format(id=artist_id), market)
         
         self._write_json_content_to_file(artist_top_tracks, "artist_top_tracks")
