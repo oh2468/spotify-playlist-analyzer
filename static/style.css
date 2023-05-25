@@ -40,6 +40,15 @@ th {
     padding: 0 0.5em;
 }
 
+th {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background-color: #000;
+    color: #fff;
+}
+
 tbody tr:nth-of-type(odd) {
     background-color: lightsalmon;
 }
@@ -222,6 +231,10 @@ table button {
     padding: 0;
     border: 1px solid #ccc;
     border-top: none;
+}
+
+.tab-page, .table-container {
+    overflow-x: auto;
 }
 
 
