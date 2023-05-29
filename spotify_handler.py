@@ -235,7 +235,7 @@ class SpotifyHandler:
         self._write_json_content_to_file(playlist, "playlist_base")
 
         spotify_tracks = self._recurse_all_page_items(playlist["tracks"], market)
-        tracks_dict = {track["track"]["id"]: track for track in spotify_tracks if not track["is_local"]}
+        tracks_dict = {track["track"]["id"]: track for track in spotify_tracks if not track["is_local"] and track["track"]}
         tracks_audio_features = self._get_audio_features(list(tracks_dict.keys()))
 
         track_features_joined = [tracks_dict[af["id"]] | {"audio_feature": af} for af in tracks_audio_features]
