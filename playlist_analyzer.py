@@ -32,6 +32,10 @@ def time_signature_formatter(time_sig):
     return f"{int(time_sig)}/4"
 
 
+def float_to_int_rounder(val):
+    return str(round(val))
+
+
 key_string_map = [
     "C", "C♯, D♭",
     "D", "D♯, E♭",
@@ -77,9 +81,9 @@ box_plots = ["tempo", "duration_ms"]
 skip_average = ["key", "time_signature"]
 
 def test_chart_making(data):
-    if data is None:
-        with open("spotify_responses/analysis.json", "r", encoding="UTF-8") as file:
-            data = json.load(file)
+    print(f"LENGTH OF DATA: {len(data)}")
+    if not data:
+        return {}
 
     seperated_data = {key: {"data": [], "total": 0} for key in data_keys}
     total_songs = len(data)
@@ -134,6 +138,9 @@ def test_chart_making(data):
         if key == "loudness":
             line_plot.range = (-60, 0)
 
+        if key == "tempo":
+            line_plot.value_formatter = float_to_int_rounder
+
         #line_plot.render_to_file(f"pygal_tests/tests_2/line_plot_{key}.svg")
         data_charts[key].append(line_plot.render_data_uri())
 
@@ -152,7 +159,7 @@ def test_chart_making(data):
     data_charts["collected"].append(box_plot.render_data_uri())
 
 
-    xy_plot = pygal.XY(title="Key and Modality", dots_size=5, js=chart_js_code)
+    xy_plot = pygal.XY(title="Key and Modality", dots_size=5, js=chart_js_code, range=(1, key_mode_len + 1))
     xy_plot.value_formatter = lambda y: ""
     xy_plot.x_value_formatter = lambda x: name_strings[int(x)]
     for k, key_map in enumerate(key_string_map):
@@ -189,8 +196,11 @@ def test_chart_making(data):
 
         if key == "duration_ms":
             box_plot.value_formatter = time_formatter
+        
+        if key == "tempo":
+            box_plot.value_formatter = float_to_int_rounder
 
         # box_plot.render_to_file("pygal_tests/tests_2/box_plot_tempo.svg")
         data_charts[key].append(box_plot.render_data_uri())
 
-    return (data, data_charts)
+    return data_charts
