@@ -4,13 +4,14 @@ from datetime import timedelta
 from functools import wraps
 import playlist_analyzer
 import country_codes
+import json
 
 
 app = Flask(__name__)
 app.secret_key = "RANDOMSECRETKEY1"
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024 # max file size = 2MB
+sp_handler = None
 sp_handler = SpotifyHandler()
-# sp_handler = None
 
 
 @app.template_filter("format_time")
@@ -25,7 +26,7 @@ def format_artists(artists):
 
 
 def _do_analysis(tracks, name, type):
-    _, charts = playlist_analyzer.test_chart_making(tracks)
+    charts = playlist_analyzer.test_chart_making(tracks)
     return render_template("analysis.html", data={"tracks": tracks, "charts": charts, "name": name, "type": type})
 
 
@@ -191,7 +192,9 @@ def get_markets():
 
 @app.get("/test")
 def testing_charts():
-    data, charts = playlist_analyzer.test_chart_making(None)
+    with open("spotify_responses/analysis.json", "r", encoding="UTF-8") as file:
+            data = json.load(file)
+    charts = playlist_analyzer.test_chart_making(data)
     return render_template("analysis.html", data={"tracks": data, "charts": charts, "name": "TESTING CHARTS", "type": "WHAT TYPE"})
 
 
