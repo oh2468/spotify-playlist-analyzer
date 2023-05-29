@@ -4,7 +4,7 @@
 {% block header %}
 <h1>{% block title %}User{% endblock %} playlists for: <span id="search-query">{{ data.username }}</span></h1>
 {% if data.user_found %}
-    <h4>Showing {{ data.playlists|count }} of {{ data.total }} public playlists.</h4>
+    <h2>Showing {{ data.playlists|count }} of {{ data.total }} public playlists.</h2>
 {% else %}
     <h2>The user your looking for doesn't exists on spotify...</h2>
 {% endif %}
@@ -12,11 +12,13 @@
 
 {% block content %}
 {% if data.user_found%}
+<div class="table-container">
     <table id="user-contant-table">
     {% with results = data.playlists %}
         {% include "data_tables/playlist.html" %}
     {% endwith %}
     </table>
+</div>
 {% endif %}
 {% endblock %}
 
