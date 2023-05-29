@@ -21,7 +21,8 @@ body {
 /* Style the tables  */
 table, th, td {
     border: 1px solid black;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
 }
 
 table {
@@ -45,8 +46,8 @@ th {
     position: sticky;
     top: 0;
     z-index: 999;
-    background-color: #000;
-    color: #fff;
+    /*! background-color: #000; */
+    /*! color: #fff; */
 }
 
 tbody tr:nth-of-type(odd) {
@@ -134,10 +135,14 @@ table button {
 }
 
 .content > header {
-    padding: 1em;
+    padding: 0.5em;
     margin: 0;
     background-color: purple;
     color: navajowhite;
+}
+
+.content > header * {
+    margin: 0.5em;
 }
 
 .playlist-input {
@@ -233,8 +238,10 @@ table button {
     border-top: none;
 }
 
+/* Fixes horizontal overflow but removes sticky table header (if not set to specific height) */
 .tab-page, .table-container {
     overflow-x: auto;
+    height: 93vh;
 }
 
 
