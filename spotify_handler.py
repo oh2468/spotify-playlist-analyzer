@@ -124,10 +124,31 @@ class SpotifyHandler:
         return result
 
 
-    def _get_audio_features(self, track_ids):
+    def _get_audio_features(self, track_map):
+        track_ids = list(track_map.keys())
+
         audio_features = self._loop_requests_with_limit(self._AUDIO_FEATURES_URL, track_ids, self._AUDIO_FEATURE_LIMIT)
         self._write_json_content_to_file(audio_features, "audio_features")
-        return audio_features
+        
+        # BUG
+        # some track ids return null, i.e. the list comp fails on af["id"] when af is None
+        # the issue seems to be on spotify's end when a song seems to have multiple ids
+        # and the analysis is done on the original id and not on an id from another compilation/playlist
+        # trying to figure out if the original id/analysis can somehow be found
+        # some track ids, e.g. 1nDYJBvNOt5afmquv7y7Ii, audio features return the following:
+        # {
+        #   "error": {
+        #     "status": 404,
+        #     "message": "analysis not found"
+        #   }
+        # }
+        # a decision needs to be made on how to handle those situations
+        # looks to be this closed issue: https://github.com/spotify/web-api/issues/1570
+        joined_track_features = [track_map[af["id"]] | {"audio_feature": af} for af in audio_features if af]
+
+        self._write_json_content_to_file(joined_track_features, "analysis")
+
+        return joined_track_features
 
 
     def _validate_response(self, response, tries=0):
@@ -235,13 +256,10 @@ class SpotifyHandler:
         self._write_json_content_to_file(playlist, "playlist_base")
 
         spotify_tracks = self._recurse_all_page_items(playlist["tracks"], market)
-        tracks_dict = {track["track"]["id"]: track for track in spotify_tracks if not track["is_local"] and track["track"]}
-        tracks_audio_features = self._get_audio_features(list(tracks_dict.keys()))
+        track_map = {track["track"]["id"]: track for track in spotify_tracks if not track["is_local"] and track["track"]}
+        af_joined_map = self._get_audio_features(track_map)
 
-        track_features_joined = [tracks_dict[af["id"]] | {"audio_feature": af} for af in tracks_audio_features]
-        self._write_json_content_to_file(track_features_joined, "analysis")
-
-        return (playlist["name"], track_features_joined, playlist["type"], playlist["tracks"]["total"])
+        return (playlist["name"], af_joined_map, playlist["type"], playlist["tracks"]["total"])
 
 
     @_spotify_id_format_validator
@@ -249,31 +267,11 @@ class SpotifyHandler:
         spotify_tracks = self._loop_requests_with_limit(self._TRACKS_URL, track_ids, self._TRACK_ID_LIMIT, market)
         
         self._write_json_content_to_file(spotify_tracks, "tracks")
+       
+        track_map = {track["id"]: {"track": track} for track in spotify_tracks if track}
+        af_joined_map = self._get_audio_features(track_map)
 
-        tracks_dict = {track["id"]: {"track": track} for track in spotify_tracks if track}
-        tracks_audio_features = self._get_audio_features(list(tracks_dict.keys()))
-        
-        self._write_json_content_to_file(tracks_audio_features, "track_features")
-
-        # BUG
-        # some track ids return null, i.e. the list comp fails on af["id"] when af is None
-        # the issue seems to be on spotify's end when a song seems to have multiple ids
-        # and the analysis is done on the original id and not on an id from another compilation/playlist
-        # trying to figure out if the original id/analysis can somehow be found
-        # some track ids, e.g. 1nDYJBvNOt5afmquv7y7Ii, audio features return the following:
-        # {
-        #   "error": {
-        #     "status": 404,
-        #     "message": "analysis not found"
-        #   }
-        # }
-        # a decision needs to be made on how to handle those situations
-        # looks to be this closed issue: https://github.com/spotify/web-api/issues/1570
-        track_features_joined = [tracks_dict[af["id"]] | {"audio_feature": af} for af in tracks_audio_features]
-
-        self._write_json_content_to_file(track_features_joined, "analysis")
-
-        return track_features_joined
+        return af_joined_map
 
 
     @_spotify_id_format_validator
