@@ -22,6 +22,7 @@ class SpotifyHandler:
     _ALBUM_MULTI_URL = "https://api.spotify.com/v1/albums?ids={ids}" #MARKET
     _ALBUM_TRACKS_URL = "https://api.spotify.com/v1/albums/{id}/tracks?limit=50" #MARKET
     _USER_PLAYLIST_URL = "https://api.spotify.com/v1/users/{user_id}/playlists?limit=50" #NOMARKET
+    _ARTIST_URL = "https://api.spotify.com/v1/artists/{id}"
     _ARTIST_CONTENT_URL = "https://api.spotify.com/v1/artists/{id}/albums?include_groups={type}&limit=50" #MARKET
     _ARTIST_APPEARS_ON_URL = "https://api.spotify.com/v1/artists/{id}/albums?include_groups=appears_on" #MARKET
     _ARTIST_RELATED = "https://api.spotify.com/v1/artists/{id}/related-artists" #NOMARKET
@@ -287,6 +288,15 @@ class SpotifyHandler:
 
         track_ids = [track["id"] for track in album_tracks]
         return (album["name"], self.get_tracks_analytics(track_ids, market=market), album["type"], album["tracks"]["total"])
+
+
+    @_spotify_id_format_validator
+    def get_artist(self, artist_id):
+        artist = self._get_request_to_json_response(self._ARTIST_URL.format(id=artist_id))
+
+        self._write_json_content_to_file(artist, "artist_base")
+
+        return artist
 
 
     @_spotify_id_format_validator
