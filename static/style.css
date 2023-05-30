@@ -38,7 +38,6 @@ th {
     height: 3em;
     font-size: 1.2em;
     width: auto;
-    padding: 0 0.5em;
 }
 
 th {
@@ -62,8 +61,8 @@ tbody tr:nth-of-type(even) {
     background-color: white;
 } */
 
-td {
-    padding: 0.5em;
+tr * {
+    padding: 0.4em;
 }
 
 table button {
