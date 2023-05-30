@@ -145,6 +145,7 @@ def album_analysis(album_id):
 def artist_lookup(artist_id):
     market = _get_market_from_cookie()
     data = {}
+    data["artist"] = sp_handler.get_artist(artist_id)
     data["top_tracks"] = sp_handler.get_artist_top_tracks(artist_id, market=market)
     data["albums"] = sp_handler.get_artist_content(artist_id, "album", market=market)
     data["singles"] = sp_handler.get_artist_content(artist_id, "single", market=market)
