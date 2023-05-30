@@ -146,7 +146,7 @@ class SpotifyHandler:
         # looks to be this closed issue: https://github.com/spotify/web-api/issues/1570
         joined_track_features = [track_map[af["id"]] | {"audio_feature": af} for af in audio_features if af]
 
-        self._write_json_content_to_file(joined_track_features, "analysis")
+        self._write_json_content_to_file(joined_track_features, "analysis_joined")
 
         return joined_track_features
 
@@ -278,7 +278,7 @@ class SpotifyHandler:
     def get_album_analytics(self, album_id, *, market=None):
         album = self._get_request_to_json_response(self._ALBUM_SINGLE_URL.format(id=album_id), market)
 
-        self._write_json_content_to_file(album, "album_single")
+        self._write_json_content_to_file(album, "album_base")
 
         album_content = self._get_request_to_json_response(self._ALBUM_TRACKS_URL.format(id=album_id), market)
         album_tracks = self._recurse_all_page_items(album_content, market)
@@ -297,7 +297,7 @@ class SpotifyHandler:
         artist_type = self._get_request_to_json_response(self._ARTIST_CONTENT_URL.format(id=artist_id, type=type), market)
         artist_content = self._recurse_all_page_items(artist_type, market)
 
-        self._write_json_content_to_file(artist_content, "artist")
+        self._write_json_content_to_file(artist_content, f"artist_{type}")
 
         return artist_content
 
@@ -318,7 +318,7 @@ class SpotifyHandler:
     def get_artist_appears_on(self, artist_id, *, market=None):
         artist_appears_on = self._get_request_to_json_response(self._ARTIST_APPEARS_ON_URL.format(id=artist_id), market)
 
-        self._write_json_content_to_file(artist_appears_on, "appears_on")
+        self._write_json_content_to_file(artist_appears_on, "artist_appears_on")
 
         return (artist_appears_on["items"], artist_appears_on["total"])
 
@@ -335,7 +335,7 @@ class SpotifyHandler:
     @_input_validator
     def get_user_playlists(self, username, *, market=None):
         playlists = self._get_request_to_json_response(self._USER_PLAYLIST_URL.format(user_id=username), market)
-        self._write_json_content_to_file(playlists, "user")
+        self._write_json_content_to_file(playlists, "user_base")
         return (playlists["items"], playlists["total"])
 
 
@@ -347,7 +347,7 @@ class SpotifyHandler:
         req_url = self._SEARCH_URL.format(q=search, type=type, limit=self._SEARCH_LIMIT)
         results = self._get_request_to_json_response(req_url, market)
 
-        self._write_json_content_to_file(results, "search")
+        self._write_json_content_to_file(results, f"search_{type}")
 
         result_key = f"{type}s"
         return (results[result_key]["items"], results[result_key]["total"])
