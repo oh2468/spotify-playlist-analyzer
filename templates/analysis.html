@@ -69,5 +69,8 @@
 </div>
 {% else %}
 <h2>Could not find any spotify analysis data for the entered id(s).</h2>
+{% if data.type == "playlist" %}
+    <h2>It could be because the playlist is empty or only contains local files</h2>
+{% endif %}
 {% endif %}
 {% endblock %}
