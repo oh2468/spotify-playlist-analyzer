@@ -2,6 +2,7 @@
 
 {% block header %}
 <h1>{% block title %}Analysis{% endblock %} for {{ data.type }}: <span id="search-query">{{ data.name }}</span></h1>
+<h2>Showing {{ data.tracks|length }} of {{ data.total }} tracks</h2>
 {% endblock %}
 
 {% block content %}
