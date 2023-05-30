@@ -241,7 +241,7 @@ class SpotifyHandler:
         track_features_joined = [tracks_dict[af["id"]] | {"audio_feature": af} for af in tracks_audio_features]
         self._write_json_content_to_file(track_features_joined, "analysis")
 
-        return (playlist["name"], track_features_joined, playlist["type"])
+        return (playlist["name"], track_features_joined, playlist["type"], playlist["tracks"]["total"])
 
 
     @_spotify_id_format_validator
@@ -288,7 +288,7 @@ class SpotifyHandler:
         self._write_json_content_to_file(album_tracks, "album_tracks")
 
         track_ids = [track["id"] for track in album_tracks]
-        return (album["name"], self.get_tracks_analytics(track_ids, market=market), album["type"])
+        return (album["name"], self.get_tracks_analytics(track_ids, market=market), album["type"], album["tracks"]["total"])
 
 
     @_spotify_id_format_validator
