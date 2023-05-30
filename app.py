@@ -26,7 +26,7 @@ def format_artists(artists):
 
 
 def _do_analysis(tracks, name, type, total):
-    charts = playlist_analyzer.test_chart_making(tracks)
+    charts = playlist_analyzer.get_data_charts(tracks)
     return render_template("analysis.html", data={"tracks": tracks, "charts": charts, "name": name, "type": type, "total": total})
 
 
@@ -194,7 +194,7 @@ def get_markets():
 def testing_charts():
     with open("spotify_responses/analysis.json", "r", encoding="UTF-8") as file:
             data = json.load(file)
-    charts = playlist_analyzer.test_chart_making(data)
+    charts = playlist_analyzer.get_data_charts(data)
     return render_template("analysis.html", data={"tracks": data, "charts": charts, "name": "TESTING CHARTS", "type": "WHAT TYPE"})
 
 

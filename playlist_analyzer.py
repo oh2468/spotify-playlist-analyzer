@@ -80,7 +80,7 @@ box_plots = ["tempo", "duration_ms"]
 
 skip_average = ["key", "time_signature"]
 
-def test_chart_making(data):
+def get_data_charts(data):
     print(f"LENGTH OF DATA: {len(data)}")
     if not data:
         return {}
