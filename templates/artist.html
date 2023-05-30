@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
-<h1>{% block title %}Artist{% endblock %} results for: <span id="search-query">{{ data.artist }}</span></h1>
+<h1>{% block title %}Artist{% endblock %} results for: <span id="search-query">{{ data.artist.name }}</span></h1>
 {% endblock %}
 
 {% block content %}
