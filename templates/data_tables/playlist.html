@@ -3,7 +3,8 @@
         <th value="number">No.</th>
         <th value="string">Name</th>
         <th value="string">Owner</th>
-        <th value="number">Song count</th>
+        <th value="string">User Id</th>
+        <th value="number">No. Songs</th>
         <th value="string">Collaborative</th>
         <th value="string">Id</th>
         <th value="string"></th>
@@ -15,6 +16,7 @@
         <td>{{ loop.index }}</td>
         <td>{{ res["name"] }}</td>
         <td>{{ res["owner"]["display_name"] }}</td>
+        <td>{{ res["owner"]["id"] }}</td>
         <td>{{ res["tracks"]["total"] }}</td>
         <td>{{ res["collaborative"] }}</td>
         <td>{{ res["id"] }}</td>
