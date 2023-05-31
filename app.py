@@ -193,7 +193,7 @@ def get_markets():
 
 @app.get("/test")
 def testing_charts():
-    with open("spotify_responses/analysis.json", "r", encoding="UTF-8") as file:
+    with open("spotify_responses/analysis_joined.json", "r", encoding="UTF-8") as file:
             data = json.load(file)
     charts = playlist_analyzer.get_data_charts(data)
     return render_template("analysis.html", data={"tracks": data, "charts": charts, "name": "TESTING CHARTS", "type": "WHAT TYPE"})
