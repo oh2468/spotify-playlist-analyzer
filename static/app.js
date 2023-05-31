@@ -111,6 +111,18 @@ function toggleTabs(event, element) {
     element.classList.add("active");
 }
 
+function switchTabs(event) {
+    var currTab = document.getElementsByClassName("tab-button active")[0];
+    var leftTab = currTab.previousElementSibling;
+    var rightTab = currTab.nextElementSibling;
+    
+    if(event.key == "ArrowLeft" && leftTab) {
+        leftTab.click();
+    } else if(event.key == "ArrowRight" && rightTab) {
+        rightTab.click();
+    }
+}
+
 
 document.querySelectorAll("th")
     .forEach((element, columnNo) => {
@@ -127,6 +139,10 @@ Array.from(document.getElementsByClassName("tab-button")).forEach(element => {
     element.addEventListener("click", event => toggleTabs(event, element));
   }
 );
+
+Array.from(document.getElementsByClassName("tab-area")).forEach(element => {
+    element.addEventListener("keyup", event => switchTabs(event));
+});
 
 
 document.getElementById("user-form").addEventListener("submit", event => goToUser(event));
