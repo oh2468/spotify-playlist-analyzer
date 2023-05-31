@@ -167,6 +167,14 @@ table button {
     width: 40%;
 }
 
+.artist-info > a {
+    color: yellow;
+}
+
+.artist-info > span {
+    color: chartreuse;
+}
+
 
 /* Style the error messages */
 .flashes * {
