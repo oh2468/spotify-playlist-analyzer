@@ -2,6 +2,10 @@
 
 {% block header %}
 <h1>{% block title %}Artist{% endblock %} results for: <span id="search-query">{{ data.artist.name }}</span></h1>
+<h2 class="artist-info">Visit them on spotify: 
+    <a href="{{ data.artist.external_urls.spotify }}" rel="noreferrer" target="_blank">FOLLOW ME</a>
+     and join the other <span>{{ data.artist.followers.total }}</span> artist followers.
+</h2>
 {% endblock %}
 
 {% block content %}
