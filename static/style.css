@@ -229,6 +229,7 @@ table button {
 
 .tab-button.active {
     background-color: blue;
+    color: white;
 }
 
 
