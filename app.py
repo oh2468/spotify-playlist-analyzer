@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.secret_key = "RANDOMSECRETKEY1"
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024 # max file size = 2MB
 sp_handler = None
-sp_handler = SpotifyHandler()
+# sp_handler = SpotifyHandler()
 
 
 @app.template_filter("format_time")
@@ -29,8 +29,8 @@ def _do_analysis(analysis_data):
     charts = playlist_analyzer.get_data_charts(analysis_data.audio_features)
     return render_template("analysis.html", data = {
         "tracks": analysis_data.audio_features, "charts": charts,
-        "name": analysis_data.name, "type": analysis_data.type, "total": analysis_data.total
-        })
+        "name": analysis_data.name, "type": analysis_data.type, "total": analysis_data.total,
+        "descriptions": playlist_analyzer.data_descriptions})
 
 
 def _analyze_tracks(track_urls, track_display_title="< individual track urls >"):
@@ -200,8 +200,10 @@ def get_markets():
 def testing_charts():
     with open("spotify_responses/analysis_joined.json", "r", encoding="UTF-8") as file:
             data = json.load(file)
-    charts = playlist_analyzer.get_data_charts(data)
-    return render_template("analysis.html", data={"tracks": data, "charts": charts, "name": "TESTING CHARTS", "type": "WHAT TYPE"})
+    test_data = AnalysisResult("TESTING CHARTS", "WHAT TYPE", len(data), None, data)
+    return _do_analysis(test_data)
+    # charts = playlist_analyzer.get_data_charts(data)
+    # return render_template("analysis.html", data={"tracks": data, "charts": charts, "name": "TESTING CHARTS", "type": "WHAT TYPE"})
 
 
 @app.errorhandler(404)
