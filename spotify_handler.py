@@ -4,6 +4,7 @@ import re
 import json
 import time
 from pathlib import Path
+from dataclasses import dataclass, field
 
 
 class SpotifyHandler:
@@ -258,9 +259,9 @@ class SpotifyHandler:
 
         spotify_tracks = self._recurse_all_page_items(playlist["tracks"], market)
         track_map = {track["track"]["id"]: track for track in spotify_tracks if not track["is_local"] and track["track"]}
-        af_joined_map = self._get_audio_features(track_map)
+        af_tracks_joined = self._get_audio_features(track_map)
 
-        return (playlist["name"], af_joined_map, playlist["type"], playlist["tracks"]["total"])
+        return AnalysisResult(playlist["name"], playlist["type"], playlist["tracks"]["total"], track_map, af_tracks_joined)
 
 
     @_spotify_id_format_validator
@@ -270,9 +271,9 @@ class SpotifyHandler:
         self._write_json_content_to_file(spotify_tracks, "tracks")
        
         track_map = {track["id"]: {"track": track} for track in spotify_tracks if track}
-        af_joined_map = self._get_audio_features(track_map)
+        af_tracks_joined = self._get_audio_features(track_map)
 
-        return af_joined_map
+        return AnalysisResult("", "track", len(track_ids), track_map, af_tracks_joined)
 
 
     @_spotify_id_format_validator
@@ -287,7 +288,12 @@ class SpotifyHandler:
         self._write_json_content_to_file(album_tracks, "album_tracks")
 
         track_ids = [track["id"] for track in album_tracks]
-        return (album["name"], self.get_tracks_analytics(track_ids, market=market), album["type"], album["tracks"]["total"])
+        track_analytics = self.get_tracks_analytics(track_ids, market=market)
+        track_analytics.name = album["name"]
+        track_analytics.type = album["type"]
+        track_analytics.total = album["tracks"]["total"]
+        
+        return track_analytics
 
 
     @_spotify_id_format_validator
@@ -366,4 +372,24 @@ class SpotifyHandler:
 class InvalidIdFormatError(Exception): pass
 
 class ContentNotFoundError(Exception): pass
+
+@dataclass
+class AnalysisResult:
+    name: str
+    type: str
+    total: int
+    track_map: dict
+    audio_features: list
+    missing_tracks: list = field(init=False)
+
+    def __post_init__(self):
+        if len(self.audio_features) == self.total:
+            self.missing_tracks = []
+        else:
+            missing_track_ids = set(self.track_map.keys()) - {track["track"]["id"] for track in self.audio_features}
+            self.missing_tracks = [self.track_map[id] for id in missing_track_ids]
+
+        # self._write_json_content_to_file(self.missing_tracks, "analysis_missing")
+        with open("spotify_responses/analysis_missing.json", "w", encoding="UTF-8") as file:
+            json.dump(self.missing_tracks, file)
 
