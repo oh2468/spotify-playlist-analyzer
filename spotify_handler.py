@@ -25,7 +25,7 @@ class SpotifyHandler:
     _USER_PLAYLIST_URL = "https://api.spotify.com/v1/users/{user_id}/playlists?limit=50" #NOMARKET
     _ARTIST_URL = "https://api.spotify.com/v1/artists/{id}"
     _ARTIST_CONTENT_URL = "https://api.spotify.com/v1/artists/{id}/albums?include_groups={type}&limit=50" #MARKET
-    _ARTIST_APPEARS_ON_URL = "https://api.spotify.com/v1/artists/{id}/albums?include_groups=appears_on" #MARKET
+    _ARTIST_APPEARS_ON_URL = "https://api.spotify.com/v1/artists/{id}/albums?include_groups=appears_on&limit=50" #MARKET
     _ARTIST_RELATED = "https://api.spotify.com/v1/artists/{id}/related-artists" #NOMARKET
     _ARTIST_TOP_TRACKS = "https://api.spotify.com/v1/artists/{id}/top-tracks" #MARKET (required?)
     _SPOTIFY_MARKETS_URL = "https://api.spotify.com/v1/markets"
