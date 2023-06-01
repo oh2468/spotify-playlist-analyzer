@@ -252,6 +252,16 @@ table button {
     height: 93vh;
 }
 
+/* Style the analysis descriptions */
+.analysis-description {
+    text-align: left;
+    padding: 0.5em 1em;
+}
+
+.analysis-description * {
+    margin: 0;
+}
+
 
 /* Style responsive elements based on screen width */
 @media screen and (max-width:1050px){
