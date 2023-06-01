@@ -13,6 +13,7 @@
         {% for key, value in data.charts.items() if value %}
         <button class="tab-button">{{ key }}</button>    
         {% endfor %}
+        <button class="tab-button">Info</button>
     </div>
     
     <div class="tab-content">
@@ -66,6 +67,15 @@
             {% endfor %}
         </div>
         {% endfor %}
+
+        <div class="tab-page hide">
+            {% for title, descr in data.descriptions.items() %}
+            <div class="analysis-description">
+                <h3>{{ title }}</h3>
+                <p>{{ descr }}</p>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
 {% else %}
