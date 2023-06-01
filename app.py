@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, abort, flash, session
-from spotify_handler import SpotifyHandler, ContentNotFoundError, InvalidIdFormatError
+from spotify_handler import SpotifyHandler, ContentNotFoundError, InvalidIdFormatError, AnalysisResult
 from datetime import timedelta
 from functools import wraps
 import playlist_analyzer
@@ -25,17 +25,21 @@ def format_artists(artists):
     return ", ".join(artist["name"] for artist in artists)
 
 
-def _do_analysis(tracks, name, type, total):
-    charts = playlist_analyzer.get_data_charts(tracks)
-    return render_template("analysis.html", data={"tracks": tracks, "charts": charts, "name": name, "type": type, "total": total})
+def _do_analysis(analysis_data):
+    charts = playlist_analyzer.get_data_charts(analysis_data.audio_features)
+    return render_template("analysis.html", data = {
+        "tracks": analysis_data.audio_features, "charts": charts,
+        "name": analysis_data.name, "type": analysis_data.type, "total": analysis_data.total
+        })
 
 
 def _analyze_tracks(track_urls, track_display_title="< individual track urls >"):
     if not (track_ids := sp_handler.valid_spotify_urls("track", track_urls)):
         return _return_flash_error(["Invalid spotify track url(s) entered in the text."])
     
-    audio_features = sp_handler.get_tracks_analytics(track_ids, market=_get_market_from_cookie())
-    return _do_analysis(audio_features, track_display_title, "track", len(track_ids))
+    analysis_data = sp_handler.get_tracks_analytics(track_ids, market=_get_market_from_cookie())
+    analysis_data.name = track_display_title
+    return _do_analysis(analysis_data)
 
 
 def _return_flash_error(error_msgs):
@@ -129,15 +133,15 @@ def analyze_text():
 @app.get("/playlist/<playlist_id>")
 @_error_handler
 def playlist_analysis(playlist_id):
-    pl_name, pl_tracks, pl_type, pl_total = sp_handler.get_playlist_analytics(playlist_id, market=_get_market_from_cookie())
-    return _do_analysis(pl_tracks, pl_name, pl_type, pl_total)
+    analysis_data = sp_handler.get_playlist_analytics(playlist_id, market=_get_market_from_cookie())
+    return _do_analysis(analysis_data)
     
 
 @app.get("/album/<album_id>")
 @_error_handler
 def album_analysis(album_id):
-    al_name, al_tracks, al_type, al_total = sp_handler.get_album_analytics(album_id, market=_get_market_from_cookie())
-    return _do_analysis(al_tracks, al_name, al_type, al_total)
+    analysis_data = sp_handler.get_album_analytics(album_id, market=_get_market_from_cookie())
+    return _do_analysis(analysis_data)
 
 
 @app.get("/artist/<artist_id>")
@@ -160,8 +164,9 @@ def artist_lookup(artist_id):
 @app.get("/track/<track_id>")
 @_error_handler
 def single_track_analysis(track_id):
-    audio_features = sp_handler.get_tracks_analytics([track_id], market=_get_market_from_cookie())
-    return _do_analysis(audio_features, "< single track >", "track", 1)
+    analysis_data = sp_handler.get_tracks_analytics([track_id], market=_get_market_from_cookie())
+    analysis_data.name = "< single track >"
+    return _do_analysis(analysis_data)
 
 
 @app.get("/user/<username>")
