@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.secret_key = "RANDOMSECRETKEY1"
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024 # max file size = 2MB
 sp_handler = None
-# sp_handler = SpotifyHandler()
+sp_handler = SpotifyHandler()
 
 
 @app.template_filter("format_time")
@@ -30,7 +30,8 @@ def _do_analysis(analysis_data):
     return render_template("analysis.html", data = {
         "tracks": analysis_data.audio_features, "charts": charts,
         "name": analysis_data.name, "type": analysis_data.type, "total": analysis_data.total,
-        "descriptions": playlist_analyzer.data_descriptions})
+        "descriptions": playlist_analyzer.data_descriptions,
+        "missing": analysis_data.missing_tracks})
 
 
 def _analyze_tracks(track_urls, track_display_title="< individual track urls >"):
