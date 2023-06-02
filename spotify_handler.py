@@ -260,6 +260,7 @@ class SpotifyHandler:
         spotify_tracks = self._recurse_all_page_items(playlist["tracks"], market)
         track_map = {track["track"]["id"]: track for track in spotify_tracks if not track["is_local"] and track["track"]}
         af_tracks_joined = self._get_audio_features(track_map)
+        track_map |= {track["track"]["uri"]: track for track in spotify_tracks if track["is_local"] and track["track"]}
 
         return AnalysisResult(playlist["name"], playlist["type"], playlist["tracks"]["total"], track_map, af_tracks_joined)
 
