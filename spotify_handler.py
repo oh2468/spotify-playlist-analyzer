@@ -74,13 +74,14 @@ class SpotifyHandler:
             print(" -- THE API KEY FILE DOESN'T EXISTS!!! ADD THE API KEY TO IT BEFORE TRYIG AGAIN -- ")
             raise ex
 
+        creation_time = time.time()
         response = requests.request("POST", self._SPOTIFY_AUTH_URL, data={"grant_type": "client_credentials"}, headers={"Authorization": spotify_api_key})
 
         if response.status_code != 200:
             raise ValueError(" -- UNABLE TO AUTHORIZE THE SPOTIFY CLIENT! DATA CAN NOT BE GATHERED.... -- ")
         
         auth_data = response.json()
-        auth_data["created_at"] = time.time()
+        auth_data["created_at"] = creation_time
         auth_data["invalid_after"] = auth_data["created_at"] + auth_data["expires_in"]
 
         self._bearer = auth_data["access_token"]
