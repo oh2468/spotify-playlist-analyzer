@@ -2,7 +2,7 @@
 
 {% block header %}
 <h1>{% block title %}Analysis{% endblock %} for {{ data.type }}: <span id="search-query">{{ data.name }}</span></h1>
-<h2>Showing {{ data.tracks|length }} of {{ data.total }} tracks</h2>
+<h2>Showing analysis for {{ data.tracks|length }} of {{ data.total }} tracks</h2>
 {% endblock %}
 
 {% block content %}
@@ -91,6 +91,19 @@
             {% endwith %}
         </div>
         {% endif %}
+    </div>
+</div>
+{% elif data.missing %}
+<div class="tab-area">
+    <div class="tab-buttons">
+        <button class="tab-button active">Missing tracks</button>
+    </div>
+    <div class="tab-page">
+        <table>
+            {% with results = data.missing|map(attribute="track") %}
+                {% include "data_tables/track.html" %}
+            {% endwith %}
+        </table>
     </div>
 </div>
 {% else %}
