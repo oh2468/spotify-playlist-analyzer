@@ -14,6 +14,9 @@
         <button class="tab-button">{{ key }}</button>    
         {% endfor %}
         <button class="tab-button">Info</button>
+        {% if data.missing %}
+        <button class="tab-button">Missing tracks</button>
+        {% endif %}
     </div>
     
     <div class="tab-content">
@@ -33,6 +36,7 @@
                         <th value="number">Energy</th>
                         <th value="number">Valence</th>
                         <th value="number">Key</th>
+                        <th value="number">Mode</th>
                         <th value="string">Id</th>
                     </tr>
                 </thead>
@@ -51,6 +55,7 @@
                         <td>{{ tr["audio_feature"]["energy"] }}</td>
                         <td>{{ tr["audio_feature"]["valence"] }}</td>
                         <td>{{ tr["audio_feature"]["key"] }}</td>
+                        <td>{{ tr["audio_feature"]["mode"] }}</td>
                         <td>{{ tr["audio_feature"]["id"] }}</td>
                     </tr>
                     {% endfor %}
@@ -76,6 +81,16 @@
             </div>
             {% endfor %}
         </div>
+
+        {% if data.missing %}
+        <div class="tab-page hide">
+            {% with results = data.missing|map(attribute="track") %}
+            <table>
+                {% include "data_tables/track.html" %}
+            </table>
+            {% endwith %}
+        </div>
+        {% endif %}
     </div>
 </div>
 {% else %}
