@@ -173,6 +173,7 @@ def single_track_analysis(track_id):
 @app.get("/user/<username>")
 def user_playlists(username):
     data = {"username": username, "user_found": False}
+    return_code = 200
     try:
         playlists = sp_handler.get_user_playlists(username, market=_get_market_from_cookie())
         data["user_found"] = True
@@ -184,9 +185,9 @@ def user_playlists(username):
     except ContentNotFoundError as err:
         # no user found with the entered name
         print(err)
-        pass
+        return_code = 404
     
-    return render_template("user.html", data=data), 404
+    return render_template("user.html", data=data), return_code
 
 
 @app.get("/markets")
