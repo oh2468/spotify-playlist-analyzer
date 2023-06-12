@@ -107,9 +107,11 @@
     </div>
 </div>
 {% else %}
-<h2>Could not find any spotify analysis data for the entered id(s).</h2>
-{% if data.type == "playlist" %}
-    <h2>It could be because the playlist is empty, only contains local files or the tracks have disappeared from spotify altogether.</h2>
-{% endif %}
+<div class="tab-page">
+    <h2>Could not find any spotify analysis data for the entered id(s).</h2>
+    {% if data.type == "playlist" %}
+        <h2>It could be because the playlist is empty, only contains local files or the tracks have disappeared from spotify altogether.</h2>
+    {% endif %}
+</div>
 {% endif %}
 {% endblock %}
