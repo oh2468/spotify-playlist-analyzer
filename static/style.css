@@ -178,7 +178,7 @@ table button {
 
 /* Style the error messages */
 .flashes * {
-    color: red;
+    color: white;
     font-weight: bolder;
 }
 
