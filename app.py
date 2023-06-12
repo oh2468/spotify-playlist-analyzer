@@ -89,6 +89,8 @@ def search():
         top_results, total = sp_handler.get_search(search_type, search_query, market=_get_market_from_cookie())
     except ValueError as err:
         return _return_flash_error([str(err)])
+    except ContentNotFoundError as err:
+        return _return_flash_error(["There seems to be issues with spotify searching at the moment!", "Try again in a while and hopefully spotify is working correctly again."])
 
     data = {"results": top_results, "search_query": search_query, "total": total, "search_type": search_type}
     return render_template("search.html", data=data)
