@@ -280,6 +280,9 @@ class SpotifyHandler:
 
     @_spotify_id_format_validator
     def get_album_analytics(self, album_ids, *, market=None):
+        if len(album_ids) > 5:
+            raise ValueError("Too many album ids entered.")
+
         albums = self._get_request_to_json_response(self._ALBUM_MULTI_URL.format(ids=",".join(album_ids)), market)
 
         self._write_json_content_to_file(albums, "album_multi_base")
