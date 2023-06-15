@@ -1,117 +1,134 @@
 {% extends 'base.html' %}
 
 {% block header %}
-<h1>{% block title %}Analysis{% endblock %} for {{ data.type }}: <span id="search-query">{{ data.name }}</span></h1>
-<h2>Showing analysis for {{ data.tracks|length }} of {{ data.total }} tracks</h2>
+{% for data in all_data %}
+<div class="analysis-title {% if loop.index0 > 0 %}hide{% endif %}">
+    <h1>{% block title %}Analysis{% endblock %} for {{ data.type }}: <span id="search-query">{{ data.name }}</span></h1>
+    <h2>Showing analysis for {{ data.tracks|length }} of {{ data.total }} tracks</h2>
+</div>
+{% endfor %}
 {% endblock %}
 
+
 {% block content %}
-{% if data.tracks %}
 <div class="tab-area">
     <div class="tab-buttons">
-        <button class="tab-button active">Song Table</button>
-        {% for key, value in data.charts.items() if value %}
-        <button class="tab-button">{{ key }}</button>    
+        {% for data in all_data %}
+        <button class="tab-button title-button {% if loop.index0 == 0 %}active{% endif %}">{{ data.name }}</button>
         {% endfor %}
-        <button class="tab-button">Info</button>
-        {% if data.missing %}
-        <button class="tab-button">Missing tracks</button>
-        {% endif %}
     </div>
-    
-    <div class="tab-content">
-        <div class="tab-page">
-            <table id="analysis-result-table">
-                <thead>
-                    <tr>
-                        <th value="number">No.</th>
-                        <th value="string">Title</th>
-                        <th value="string">Artist</th>
-                        <th value="string">Album</th>
-                        <!-- <th value="string">Genre</th> -->
-                        <th value="string">Duration</th>
-                        <th value="number">Popularity</th>
-                        <th value="number">BPM</th>
-                        <th value="number">Danceability</th>
-                        <th value="number">Energy</th>
-                        <th value="number">Valence</th>
-                        <th value="number">Key</th>
-                        <th value="number">Mode</th>
-                        <th value="string">Id</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for tr in data.tracks %}
-                    <tr>
-                        <td>{{ loop.index }}</td>
-                        <td>{{ tr["track"]["name"] }}</td>
-                        <td>{{ tr["track"]["artists"]|format_artists }}</td>
-                        <td>{{ tr["track"]["album"]["name"] }}</td>
-                        <!-- <td>{{ tr["track"]["is_local"] }}</td> -->
-                        <td>{{ tr["track"]["duration_ms"] | format_time }}</td>
-                        <td>{{ tr["track"]["popularity"] }}</td>
-                        <td>{{ tr["audio_feature"]["tempo"]|round|int }}</td>
-                        <td>{{ tr["audio_feature"]["danceability"] }}</td>
-                        <td>{{ tr["audio_feature"]["energy"] }}</td>
-                        <td>{{ tr["audio_feature"]["valence"] }}</td>
-                        <td>{{ tr["audio_feature"]["key"] }}</td>
-                        <td>{{ tr["audio_feature"]["mode"] }}</td>
-                        <td>{{ tr["audio_feature"]["id"] }}</td>
-                    </tr>
+
+    <div id="analysis-area">
+        {% for data in all_data %}
+        {% if data.tracks %}
+        <div class="tab-area {% if loop.index0 > 0 %}hide{% endif %}">
+            <div class="tab-buttons">
+                <button class="tab-button active">Song Table</button>
+                {% for key, value in data.charts.items() if value %}
+                <button class="tab-button">{{ key }}</button>    
+                {% endfor %}
+                <button class="tab-button">Info</button>
+                {% if data.missing %}
+                <button class="tab-button">Missing tracks</button>
+                {% endif %}
+            </div>
+            
+            <div class="tab-content">
+                <div class="tab-page">
+                    <table id="analysis-result-table">
+                        <thead>
+                            <tr>
+                                <th value="number">No.</th>
+                                <th value="string">Title</th>
+                                <th value="string">Artist</th>
+                                <th value="string">Album</th>
+                                <!-- <th value="string">Genre</th> -->
+                                <th value="string">Duration</th>
+                                <th value="number">Popularity</th>
+                                <th value="number">BPM</th>
+                                <th value="number">Danceability</th>
+                                <th value="number">Energy</th>
+                                <th value="number">Valence</th>
+                                <th value="number">Key</th>
+                                <th value="number">Mode</th>
+                                <th value="string">Id</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tr in data.tracks %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ tr["track"]["name"] }}</td>
+                                <td>{{ tr["track"]["artists"]|format_artists }}</td>
+                                <td>{{ tr["track"]["album"]["name"] }}</td>
+                                <!-- <td>{{ tr["track"]["is_local"] }}</td> -->
+                                <td>{{ tr["track"]["duration_ms"] | format_time }}</td>
+                                <td>{{ tr["track"]["popularity"] }}</td>
+                                <td>{{ tr["audio_feature"]["tempo"]|round|int }}</td>
+                                <td>{{ tr["audio_feature"]["danceability"] }}</td>
+                                <td>{{ tr["audio_feature"]["energy"] }}</td>
+                                <td>{{ tr["audio_feature"]["valence"] }}</td>
+                                <td>{{ tr["audio_feature"]["key"] }}</td>
+                                <td>{{ tr["audio_feature"]["mode"] }}</td>
+                                <td>{{ tr["audio_feature"]["id"] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                {% for key, charts in data.charts.items() if charts %}
+                <div class="tab-page hide">
+                    {% for chart in charts %}
+                    <div class="data-chart">
+                        <embed type="image/svg+xml" src="{{ chart|safe }}"/>
+                    </div>
                     {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                </div>
+                {% endfor %}
         
-        {% for key, charts in data.charts.items() if charts %}
-        <div class="tab-page hide">
-            {% for chart in charts %}
-            <div class="data-chart">
-                <embed type="image/svg+xml" src="{{ chart|safe }}"/>
+                <div class="tab-page hide">
+                    {% for title, descr in data.descriptions.items() %}
+                    <div class="analysis-description">
+                        <h3>{{ title }}</h3>
+                        <p>{{ descr }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+        
+                {% if data.missing %}
+                <div class="tab-page hide">
+                    {% with results = data.missing|map(attribute="track") %}
+                    <table>
+                        {% include "data_tables/track.html" %}
+                    </table>
+                    {% endwith %}
+                </div>
+                {% endif %}
             </div>
-            {% endfor %}
         </div>
-        {% endfor %}
-
-        <div class="tab-page hide">
-            {% for title, descr in data.descriptions.items() %}
-            <div class="analysis-description">
-                <h3>{{ title }}</h3>
-                <p>{{ descr }}</p>
+        {% elif data.missing %}
+        <div class="tab-area">
+            <div class="tab-buttons">
+                <button class="tab-button active">Missing tracks</button>
             </div>
-            {% endfor %}
+            <div class="tab-page">
+                <table>
+                    {% with results = data.missing|map(attribute="track") %}
+                        {% include "data_tables/track.html" %}
+                    {% endwith %}
+                </table>
+            </div>
         </div>
-
-        {% if data.missing %}
-        <div class="tab-page hide">
-            {% with results = data.missing|map(attribute="track") %}
-            <table>
-                {% include "data_tables/track.html" %}
-            </table>
-            {% endwith %}
+        {% else %}
+        <div class="tab-page">
+            <h2>Could not find any spotify analysis data for the entered id(s).</h2>
+            {% if data.type == "playlist" %}
+                <h2>It could be because the playlist is empty, only contains local files or the tracks have disappeared from spotify altogether.</h2>
+            {% endif %}
         </div>
         {% endif %}
+        {% endfor %}
     </div>
 </div>
-{% elif data.missing %}
-<div class="tab-area">
-    <div class="tab-buttons">
-        <button class="tab-button active">Missing tracks</button>
-    </div>
-    <div class="tab-page">
-        <table>
-            {% with results = data.missing|map(attribute="track") %}
-                {% include "data_tables/track.html" %}
-            {% endwith %}
-        </table>
-    </div>
-</div>
-{% else %}
-<div class="tab-page">
-    <h2>Could not find any spotify analysis data for the entered id(s).</h2>
-    {% if data.type == "playlist" %}
-        <h2>It could be because the playlist is empty, only contains local files or the tracks have disappeared from spotify altogether.</h2>
-    {% endif %}
-</div>
-{% endif %}
 {% endblock %}
