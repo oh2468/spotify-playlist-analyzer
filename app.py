@@ -4,7 +4,7 @@ from datetime import timedelta
 from functools import wraps
 import playlist_analyzer
 import country_codes
-import json
+import pickle
 
 
 app = Flask(__name__)
@@ -26,12 +26,19 @@ def format_artists(artists):
 
 
 def _do_analysis(analysis_data):
-    charts = playlist_analyzer.get_data_charts(analysis_data.audio_features)
-    return render_template("analysis.html", data = {
-        "tracks": analysis_data.audio_features, "charts": charts,
-        "name": analysis_data.name, "type": analysis_data.type, "total": analysis_data.total,
-        "descriptions": playlist_analyzer.data_descriptions,
-        "missing": analysis_data.missing_tracks})
+    _dump_data_for_testing(analysis_data)
+    all_data = []
+    for analysis in analysis_data:
+        data = {}
+        data["tracks"] = analysis.audio_features
+        data["name"] = analysis.name
+        data["type"] = analysis.type
+        data["total"] = analysis.total
+        data["missing"] = analysis.missing_tracks
+        data["descriptions"] = playlist_analyzer.data_descriptions
+        data["charts"] = playlist_analyzer.get_data_charts(data["tracks"])
+        all_data.append(data)
+    return render_template("analysis.html", all_data=all_data)
 
 
 def _analyze_tracks(track_urls, track_display_title="< individual track urls >"):
@@ -40,7 +47,7 @@ def _analyze_tracks(track_urls, track_display_title="< individual track urls >")
     
     analysis_data = sp_handler.get_tracks_analytics(track_ids, market=_get_market_from_cookie())
     analysis_data.name = track_display_title
-    return _do_analysis(analysis_data)
+    return _do_analysis([analysis_data])
 
 
 def _return_flash_error(error_msgs):
@@ -72,6 +79,14 @@ def _error_handler(func):
             return _return_flash_error([msg])
     return handler
 
+
+def _dump_data_for_testing(data):
+    with open("spotify_responses/pickled_data", "wb") as file:
+        pickle.dump(data, file)
+
+def _get_data_for_testing():
+    with open("spotify_responses/pickled_data", "rb") as file:
+        return pickle.load(file)
 
 @app.get("/")
 def index():
@@ -137,13 +152,13 @@ def analyze_text():
 @_error_handler
 def playlist_analysis(playlist_id):
     analysis_data = sp_handler.get_playlist_analytics(playlist_id, market=_get_market_from_cookie())
-    return _do_analysis(analysis_data)
+    return _do_analysis([analysis_data])
     
 
-@app.get("/album/<album_id>")
+@app.get("/album/<album_ids>")
 @_error_handler
-def album_analysis(album_id):
-    analysis_data = sp_handler.get_album_analytics(album_id, market=_get_market_from_cookie())
+def album_analysis(album_ids):
+    analysis_data = sp_handler.get_album_analytics(album_ids.split(","), market=_get_market_from_cookie())
     return _do_analysis(analysis_data)
 
 
@@ -202,12 +217,8 @@ def get_markets():
 
 @app.get("/test")
 def testing_charts():
-    with open("spotify_responses/analysis_joined.json", "r", encoding="UTF-8") as file:
-            data = json.load(file)
-    test_data = AnalysisResult("TESTING CHARTS", "WHAT TYPE", len(data), None, data)
+    test_data = _get_data_for_testing()
     return _do_analysis(test_data)
-    # charts = playlist_analyzer.get_data_charts(data)
-    # return render_template("analysis.html", data={"tracks": data, "charts": charts, "name": "TESTING CHARTS", "type": "WHAT TYPE"})
 
 
 @app.errorhandler(404)
