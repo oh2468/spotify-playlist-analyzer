@@ -262,6 +262,10 @@ table button {
     margin: 0;
 }
 
+#compare-btn {
+    background-color: limegreen;
+}
+
 
 /* Style responsive elements based on screen width */
 @media screen and (max-width:1050px){
