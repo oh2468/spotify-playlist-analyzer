@@ -1,10 +1,10 @@
-from os import environ
 import requests
 import re
 import json
 import time
 from pathlib import Path
 from dataclasses import dataclass, field
+from collections import defaultdict
 
 
 class SpotifyHandler:
@@ -279,23 +279,39 @@ class SpotifyHandler:
 
 
     @_spotify_id_format_validator
-    def get_album_analytics(self, album_id, *, market=None):
-        album = self._get_request_to_json_response(self._ALBUM_SINGLE_URL.format(id=album_id), market)
+    def get_album_analytics(self, album_ids, *, market=None):
+        albums = self._get_request_to_json_response(self._ALBUM_MULTI_URL.format(ids=",".join(album_ids)), market)
 
-        self._write_json_content_to_file(album, "album_base")
+        self._write_json_content_to_file(albums, "album_multi_base")
 
-        album_content = self._get_request_to_json_response(self._ALBUM_TRACKS_URL.format(id=album_id), market)
-        album_tracks = self._recurse_all_page_items(album_content, market)
+        album_map = {album["id"]: album for album in albums["albums"]}
+        all_album_tracks = []
+        for album in albums["albums"]:
+            all_album_tracks += self._recurse_all_page_items(album["tracks"], market)
 
-        self._write_json_content_to_file(album_tracks, "album_tracks")
+        self._write_json_content_to_file(all_album_tracks, "multi_album_test_file")
 
-        track_ids = [track["id"] for track in album_tracks]
-        track_analytics = self.get_tracks_analytics(track_ids, market=market)
-        track_analytics.name = album["name"]
-        track_analytics.type = album["type"]
-        track_analytics.total = album["tracks"]["total"]
+        all_track_ids = [track["id"] for track in all_album_tracks]
+        all_track_analytics = self.get_tracks_analytics(all_track_ids, market=market)
+
+        separated_album_tracks = defaultdict(list)
+        for joined_track in all_track_analytics.audio_features:
+            album_id = joined_track["track"]["album"]["id"]
+            separated_album_tracks[album_id].append(joined_track)
         
-        return track_analytics
+        separated_albums = []
+        for al_id, al_tracks in separated_album_tracks.items():
+            track_map = {}
+            features = []
+            for track_feat in al_tracks:
+                track = track_feat["track"]
+                track_map[track["id"]] = track
+                features.append(track_feat)
+            
+            album = album_map[al_id]
+            separated_albums.append(AnalysisResult(album["name"], album["type"], album["total_tracks"], track_map, features))
+
+        return separated_albums
 
 
     @_spotify_id_format_validator
