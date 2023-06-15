@@ -1,5 +1,6 @@
 var column_sort_toggle = false;
 var previous_column_sort;
+var current_tab = null;
 
 
 function sortTable(event, element, colNo) {
@@ -9,10 +10,14 @@ function sortTable(event, element, colNo) {
 
     var analysis_table_data = Array.from(data_table.children);
 
-    if (element.getAttribute("value") !== "number") {
+    if (element.getAttribute("value") === "string") {
         var sorted = analysis_table_data.sort((a, b) => a.children[colNo].innerText.toLowerCase() > b.children[colNo].innerText.toLowerCase());
-    } else {
+    } else if (element.getAttribute("value") === "number") {
         var sorted = analysis_table_data.sort((a, b) => Number(a.children[colNo].innerText) > Number(b.children[colNo].innerText));
+    } else if (element.getAttribute("value") === "check") {
+        var sorted = analysis_table_data.sort((a, b) => a.children[colNo].firstChild.checked >= b.children[colNo].firstChild.checked);
+    } else {
+        return;
     }
     
     sorted = column_sort_toggle ? sorted.reverse() : sorted;
@@ -95,34 +100,71 @@ function updateSelectedMarket(marketList, newIndex) {
 }
 
 function toggleTabs(event, element) {
-    var myIndex = Array.from(element.parentNode.children).indexOf(element);
-    var tabPages = document.getElementsByClassName("tab-page");
+    current_tab = element;
     
-    for(page of tabPages) {
-        page.classList.add("hide");
-    }
-
-    tabPages[myIndex].classList.remove("hide");
-
-    for(btn of document.getElementsByClassName("tab-button")) {
-        btn.classList.remove("active");
-    }
-
+    var mySiblings = Array.from(element.parentNode.children);
+    var myIndex = mySiblings.indexOf(element);
+    var nextSubAreas = Array.from(element.parentNode.nextElementSibling.children);
+    
+    mySiblings.forEach(sibl => sibl.classList.remove("active"));
+    nextSubAreas.forEach(area => area.classList.add("hide"));
+    
+    nextSubAreas[myIndex].classList.remove("hide");
     element.classList.add("active");
+
+    if(element.classList.contains("title-button")) {
+        var titles = Array.from(document.getElementsByClassName("analysis-title"));
+        titles.forEach(titl => titl.classList.add("hide"));
+        titles[myIndex].classList.remove("hide");
+    }
 }
 
 function switchTabs(event) {
-    var currTab = document.getElementsByClassName("tab-button active")[0];
-    var leftTab = currTab.previousElementSibling;
-    var rightTab = currTab.nextElementSibling;
+    event.stopPropagation();
+
+    if(!current_tab) {
+        current_tab = document.getElementsByClassName("tab-button active")[0];
+    }
+
+    var leftTab = current_tab.previousElementSibling;
+    var rightTab = current_tab.nextElementSibling;
     
     if(event.key == "ArrowLeft" && leftTab) {
-        leftTab.click();
+        return leftTab.click();
     } else if(event.key == "ArrowRight" && rightTab) {
-        rightTab.click();
+        return rightTab.click();
     }
 }
 
+function getSelectedAlbumBoxes() {
+    return Array.from(document.getElementsByClassName("compare-check")).filter(box => box.checked);
+}
+
+function selectMultiAlbums(event) {
+    var compareButton = document.getElementById("compare-btn");
+    var boxes = getSelectedAlbumBoxes();
+
+    if(boxes.length == 0) {
+        compareButton.classList.add("hide");
+    } else {
+        compareButton.classList.remove("hide");
+    }
+
+}
+
+function submitMultiAlbums(event) {
+    var boxes = getSelectedAlbumBoxes();
+
+    if (boxes.length > 5) {
+        alert("Too many boxes selected... Max number of selections is: 5");
+    } else if (boxes.length == 0) {
+        return;
+    } else {
+        var selectedIds = boxes.map(box => box.value);
+        window.location = "/album/" + selectedIds.join(",")
+    }
+
+}
 
 document.querySelectorAll("th")
     .forEach((element, columnNo) => {
@@ -141,12 +183,19 @@ Array.from(document.getElementsByClassName("tab-button")).forEach(element => {
 );
 
 Array.from(document.getElementsByClassName("tab-area")).forEach(element => {
-    element.addEventListener("keyup", event => switchTabs(event));
+    element.addEventListener("keyup", switchTabs);
 });
 
+Array.from(document.getElementsByClassName("compare-check")).forEach(element => {
+    element.addEventListener("click", selectMultiAlbums);
+})
 
-document.getElementById("user-form").addEventListener("submit", event => goToUser(event));
-document.getElementById("country-select").addEventListener("change", event => setMarket(event));
+try {
+    document.getElementById("compare-btn").addEventListener("click", submitMultiAlbums)
+} catch(err) {}
+
+document.getElementById("user-form").addEventListener("submit", goToUser);
+document.getElementById("country-select").addEventListener("change", setMarket);
 
 document.addEventListener("DOMContentLoaded", () => {
     markets = sessionStorage.getItem("markets");
