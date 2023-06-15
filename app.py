@@ -77,6 +77,8 @@ def _error_handler(func):
                 # the exception failed to include the message, should not happen
                 pass
             return _return_flash_error([msg])
+        except ValueError as err:
+            return _return_flash_error([str(err)])
     return handler
 
 
@@ -158,7 +160,7 @@ def playlist_analysis(playlist_id):
 @app.get("/album/<album_ids>")
 @_error_handler
 def album_analysis(album_ids):
-    analysis_data = sp_handler.get_album_analytics(album_ids.split(","), market=_get_market_from_cookie())
+    analysis_data = sp_handler.get_album_analytics(album_ids.split(",") + album_ids.split(","), market=_get_market_from_cookie())
     return _do_analysis(analysis_data)
 
 
