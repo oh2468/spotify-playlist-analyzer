@@ -136,13 +136,13 @@ function switchTabs(event) {
     }
 }
 
-function getSelectedAlbumBoxes() {
+function getSelectedBoxes() {
     return Array.from(document.getElementsByClassName("compare-check")).filter(box => box.checked);
 }
 
 function selectMultiAlbums(event) {
     var compareButton = document.getElementById("compare-btn");
-    var boxes = getSelectedAlbumBoxes();
+    var boxes = getSelectedBoxes();
 
     if(boxes.length == 0) {
         compareButton.classList.add("hide");
@@ -153,7 +153,7 @@ function selectMultiAlbums(event) {
 }
 
 function submitMultiAlbums(event) {
-    var boxes = getSelectedAlbumBoxes();
+    var boxes = getSelectedBoxes();
 
     if (boxes.length > 5) {
         alert("Too many boxes selected... Max number of selections is: 5");
@@ -161,7 +161,7 @@ function submitMultiAlbums(event) {
         return;
     } else {
         var selectedIds = boxes.map(box => box.value);
-        window.location = "/album/" + selectedIds.join(",")
+        event.target.parentElement.href += selectedIds.join(",");
     }
 
 }
