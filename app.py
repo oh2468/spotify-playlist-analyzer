@@ -155,7 +155,7 @@ def analyze_text():
 @_error_handler
 def playlist_analysis(playlist_ids):
     analysis_data = sp_handler.get_playlist_analytics(playlist_ids.split(","), market=_get_market_from_cookie())
-    return _do_analysis([analysis_data])
+    return _do_analysis(analysis_data)
     
 
 @app.get("/album/<album_ids>")
