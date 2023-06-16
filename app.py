@@ -73,8 +73,9 @@ def _error_handler(func):
             msg = str(err)
             try:
                 msg = err.args[0]["error"]["message"]
-            except (IndexError, KeyError) as err:
+            except (IndexError, KeyError, TypeError) as err:
                 # the exception failed to include the message, should not happen
+                # now happens when multi albums throws error for all invalid ids
                 pass
             return _return_flash_error([msg])
         except ValueError as err:
@@ -150,17 +151,17 @@ def analyze_text():
     return _analyze_tracks(track_urls)
 
 
-@app.get("/playlist/<playlist_id>")
+@app.get("/playlist/<playlist_ids>")
 @_error_handler
-def playlist_analysis(playlist_id):
-    analysis_data = sp_handler.get_playlist_analytics(playlist_id, market=_get_market_from_cookie())
+def playlist_analysis(playlist_ids):
+    analysis_data = sp_handler.get_playlist_analytics(playlist_ids.split(","), market=_get_market_from_cookie())
     return _do_analysis([analysis_data])
     
 
 @app.get("/album/<album_ids>")
 @_error_handler
 def album_analysis(album_ids):
-    analysis_data = sp_handler.get_album_analytics(album_ids.split(",") + album_ids.split(","), market=_get_market_from_cookie())
+    analysis_data = sp_handler.get_album_analytics(album_ids.split(","), market=_get_market_from_cookie())
     return _do_analysis(analysis_data)
 
 
