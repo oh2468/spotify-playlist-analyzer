@@ -284,12 +284,17 @@ class SpotifyHandler:
             raise ValueError("Too many album ids entered.")
 
         albums = self._get_request_to_json_response(self._ALBUM_MULTI_URL.format(ids=",".join(album_ids)), market)
+        albums = [album for album in albums["albums"] if album]
 
         self._write_json_content_to_file(albums, "album_multi_base")
 
-        album_map = {album["id"]: album for album in albums["albums"]}
+        if not albums:
+            raise ContentNotFoundError(f"No content found for the entred id(s): {', '.join(album_ids)}")
+        
+        album_map = {album["id"]: album for album in albums}
+
         all_album_tracks = []
-        for album in albums["albums"]:
+        for album in albums:
             all_album_tracks += self._recurse_all_page_items(album["tracks"], market)
 
         self._write_json_content_to_file(all_album_tracks, "multi_album_test_file")
