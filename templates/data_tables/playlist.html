@@ -1,5 +1,6 @@
 <thead>
     <tr>
+        <th value="check">Select</th>
         <th value="number">No.</th>
         <th value="string">Name</th>
         <th value="string">Owner</th>
@@ -7,12 +8,13 @@
         <th value="number">No. Songs</th>
         <th value="string">Collaborative</th>
         <th value="string">Id</th>
-        <th value="string"></th>
+        <th value=""><a href="/playlist/"><button id="compare-btn" class="hide" type="button">Compare Playlists</button></a></th>
     </tr>
 </thead>
 <tbody>
     {% for res in results %}
     <tr>
+        <td><input type="checkbox" class="compare-check" value="{{ res['id'] }}"></td>
         <td>{{ loop.index }}</td>
         <td>{{ res["name"] }}</td>
         <td>{{ res["owner"]["display_name"] }}</td>
