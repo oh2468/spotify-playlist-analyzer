@@ -34,6 +34,8 @@ class SpotifyHandler:
     _SEARCH_LIMIT = 50
     _VALID_SEARCH_TYPES = ["playlist", "artist", "album"]
     _VALID_ARTIST_CONTENT_TYPES = ["album", "single", "compilation", "appears_on"]
+    _MAX_MULTI_PLAYLIST = 3
+    _MAX_MULTI_ALBUM = 5
 
 
     def __init__(self):
@@ -252,18 +254,36 @@ class SpotifyHandler:
         return validator
 
 
+    def _validate_output(self, output, ids):
+        if not output:
+            raise ContentNotFoundError(f"No content found for the entred id(s): {', '.join(ids)}")
+
+
     @_spotify_id_format_validator
-    def get_playlist_analytics(self, playlist_id, *, market=None):
-        playlist = self._get_request_to_json_response(self._PLAYLIST_URL.format(id=playlist_id), market)
+    def get_playlist_analytics(self, playlist_ids, *, market=None):
+        if len(playlist_ids) > self._MAX_MULTI_PLAYLIST:
+            raise ValueError("Too many playlist ids entered.")
 
-        self._write_json_content_to_file(playlist, "playlist_base")
+        all_analysis_results = []
+        
+        for playlist_id in playlist_ids:
+            try:
+                playlist = self._get_request_to_json_response(self._PLAYLIST_URL.format(id=playlist_id), market)
+            except ContentNotFoundError as err:
+                continue
 
-        spotify_tracks = self._recurse_all_page_items(playlist["tracks"], market)
-        track_map = {track["track"]["id"]: track for track in spotify_tracks if not track["is_local"] and track["track"]}
-        af_tracks_joined = self._get_audio_features(track_map)
-        track_map |= {track["track"]["uri"]: track for track in spotify_tracks if track["is_local"] and track["track"]}
+            self._write_json_content_to_file(playlist, "playlist_base")
 
-        return AnalysisResult(playlist["name"], playlist["type"], playlist["tracks"]["total"], track_map, af_tracks_joined)
+            spotify_tracks = self._recurse_all_page_items(playlist["tracks"], market)
+            track_map = {track["track"]["id"]: track for track in spotify_tracks if not track["is_local"] and track["track"]}
+            af_tracks_joined = self._get_audio_features(track_map)
+            track_map |= {track["track"]["uri"]: track for track in spotify_tracks if track["is_local"] and track["track"]}
+
+            all_analysis_results.append(AnalysisResult(playlist["name"], playlist["type"], playlist["tracks"]["total"], track_map, af_tracks_joined))
+        
+        self._validate_output(all_analysis_results, playlist_ids)
+
+        return all_analysis_results
 
 
     @_spotify_id_format_validator
@@ -280,7 +300,7 @@ class SpotifyHandler:
 
     @_spotify_id_format_validator
     def get_album_analytics(self, album_ids, *, market=None):
-        if len(album_ids) > 5:
+        if len(album_ids) > self._MAX_MULTI_ALBUM:
             raise ValueError("Too many album ids entered.")
 
         albums = self._get_request_to_json_response(self._ALBUM_MULTI_URL.format(ids=",".join(album_ids)), market)
@@ -288,8 +308,7 @@ class SpotifyHandler:
 
         self._write_json_content_to_file(albums, "album_multi_base")
 
-        if not albums:
-            raise ContentNotFoundError(f"No content found for the entred id(s): {', '.join(album_ids)}")
+        self._validate_output(albums, album_ids)
         
         album_map = {album["id"]: album for album in albums}
 
