@@ -172,6 +172,19 @@ function openChartInNewTab(event) {
     win.document.write(chart.outerHTML);
 }
 
+function fileDrag(event) {
+    event.preventDefault();
+}
+
+function fileDrop(event) {
+    event.preventDefault();
+
+    var dt = new DataTransfer();
+    dt.items.add(event.dataTransfer.files[0]);
+    event.target.files = dt.files;
+}
+
+
 document.querySelectorAll("th")
     .forEach((element, columnNo) => {
         element.addEventListener("click", event => sortTable(event, element, columnNo));
@@ -200,12 +213,18 @@ Array.from(document.getElementsByClassName("chart-button")).forEach(element => {
     element.addEventListener("click", openChartInNewTab);
 });
 
+document.getElementById("user-form").addEventListener("submit", goToUser);
+document.getElementById("country-select").addEventListener("change", setMarket);
+
 try {
     document.getElementById("compare-btn").addEventListener("click", submitMultiAlbums)
 } catch(err) {}
 
-document.getElementById("user-form").addEventListener("submit", goToUser);
-document.getElementById("country-select").addEventListener("change", setMarket);
+try {
+    document.getElementById("tracks_file").addEventListener("dragover", fileDrag);
+    document.getElementById("tracks_file").addEventListener("drop", fileDrop);
+} catch(e) {}
+
 
 document.addEventListener("DOMContentLoaded", () => {
     markets = sessionStorage.getItem("markets");
