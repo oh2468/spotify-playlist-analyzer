@@ -82,6 +82,7 @@
                     {% for chart in charts %}
                     <div class="data-chart">
                         <embed type="image/svg+xml" src="{{ chart|safe }}"/>
+                        <button class="chart-button" type="button">Open chart in a new tab</button>
                     </div>
                     {% endfor %}
                 </div>
