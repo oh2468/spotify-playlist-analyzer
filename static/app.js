@@ -166,6 +166,12 @@ function submitMultiAlbums(event) {
 
 }
 
+function openChartInNewTab(event) {
+    var chart = event.target.previousElementSibling;
+    var win = window.open();
+    win.document.write(chart.outerHTML);
+}
+
 document.querySelectorAll("th")
     .forEach((element, columnNo) => {
         element.addEventListener("click", event => sortTable(event, element, columnNo));
@@ -188,7 +194,11 @@ Array.from(document.getElementsByClassName("tab-area")).forEach(element => {
 
 Array.from(document.getElementsByClassName("compare-check")).forEach(element => {
     element.addEventListener("click", selectMultiAlbums);
-})
+});
+
+Array.from(document.getElementsByClassName("chart-button")).forEach(element => {
+    element.addEventListener("click", openChartInNewTab);
+});
 
 try {
     document.getElementById("compare-btn").addEventListener("click", submitMultiAlbums)
