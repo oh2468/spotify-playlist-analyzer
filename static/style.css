@@ -72,6 +72,10 @@ table button {
     border: 1px solid black;
 }
 
+#compare-btn {
+    background-color: limegreen;
+}
+
 
 /* Style the navbar */
 .navbar {
@@ -204,6 +208,15 @@ table button {
     margin: auto;
 }
 
+.chart-button {
+    background-color: black;
+    color: white;
+    border-radius: 6px;
+    border: 1px solid black;
+    padding: 1em 2em;
+    margin: 0.2em 0 1em 0;
+}
+
 
 /* Style the tab button row and the tab buttons  */
 .tab-buttons {
@@ -260,10 +273,6 @@ table button {
 
 .analysis-description * {
     margin: 0;
-}
-
-#compare-btn {
-    background-color: limegreen;
 }
 
 
