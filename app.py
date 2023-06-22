@@ -87,9 +87,15 @@ def _dump_data_for_testing(data):
     with open("spotify_responses/pickled_data", "wb") as file:
         pickle.dump(data, file)
 
+
 def _get_data_for_testing():
     with open("spotify_responses/pickled_data", "rb") as file:
         return pickle.load(file)
+
+
+def _clean_spotify_urls(content):
+    return [url.strip().split("?")[0] for url in content.splitlines() if url]
+
 
 @app.get("/")
 def index():
@@ -114,21 +120,30 @@ def search():
     return render_template("search.html", data=data)
 
 
-@app.post("/playlist_url")
-def analyze_url():
-    url = request.form.get("playlist_url", "").strip()
-    type = request.form.get("type", "")
+@app.post("/playlist-urls")
+def analyze_urls():
+    urls = _clean_spotify_urls(request.form.get("spotify-urls", ""))
+    print(urls)
 
-    if not (content_id := sp_handler.valid_spotify_urls(type, [url])):
-        return _return_flash_error([f"Invalid spotify {type} url format entered."])
-
-    if type == "album":
-        return redirect(url_for("album_analysis", album_id=content_id[0]))
+    try:
+        url_type = urls[0].split("/")[3]
+    except:
+        url_type = None # failed to extract url type
     
-    return redirect(url_for("playlist_analysis", playlist_id=content_id[0]))
-    
+    print(url_type)
 
-@app.post("/playlist_file")
+    if url_type == "track":
+        return _analyze_tracks(urls)
+
+    spotify_ids = sp_handler.valid_spotify_urls(url_type, urls)
+
+    if not spotify_ids or not url_type:
+        return _return_flash_error(["Invalid spotify url format entered", "Make sure to only enter a single type or content link"])
+
+    return redirect(f"/{url_type}/{','.join(spotify_ids)}")
+
+
+@app.post("/playlist-file")
 def analyze_file():
     playlist_file = request.files["tracks_file"]
     filename = playlist_file.filename
@@ -137,18 +152,8 @@ def analyze_file():
     if not file_content:
         return _return_flash_error(["The uploaded file is empty."])
     
-    playlist_tracks = [line.strip() for line in file_content.decode().splitlines()]
+    playlist_tracks = _clean_spotify_urls(file_content.decode())
     return _analyze_tracks(playlist_tracks, filename)
-
-
-@app.post("/playlist_text")
-def analyze_text():
-    track_urls = [track.strip() for track in request.form.get("tracks_text", "").splitlines()]
-    
-    if not track_urls:
-        return _return_flash_error(["No spotify track url(s) entered in the text field."])
-    
-    return _analyze_tracks(track_urls)
 
 
 @app.get("/playlist/<playlist_ids>")
@@ -187,7 +192,7 @@ def artist_lookup(artist_id):
 def single_track_analysis(track_id):
     analysis_data = sp_handler.get_tracks_analytics([track_id], market=_get_market_from_cookie())
     analysis_data.name = "< single track >"
-    return _do_analysis(analysis_data)
+    return _do_analysis([analysis_data])
 
 
 @app.get("/user/<username>")
