@@ -1,33 +1,23 @@
 {% extends 'base.html' %}
 
 {% block header %}
-<h1>{% block title %}Analyze{% endblock %} a public spotify playlist</h1>
-<h3>Select one of the options below</h3>
+<h1>{% block title %}Analyze{% endblock %} public spotify playlists, albums or tracks</h1>
+<h3>Enter the spotify links down below. Remember to only analyze links of one type at a time!</h3>
 {% endblock %}
 
 {% block content %}
-<div class="playlist-input">
-    <form method="post" action="playlist_url">
-        <label for="playlist_url">Spotify playlist url</label>
-        <input type="url" name="playlist_url" id="playlist_url" placeholder="https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M" required>
-        <input type="text" name="type" value="playlist" style="display: none;">
+<div id="spotify-url-input" class="playlist-input">
+    <form action="playlist-urls" method="post">
+        <label for="spotify-urls"></label>
+        <textarea name="spotify-urls" id="spotify-urls" cols="100" rows="20" required placeholder="{% include 'usage_info.nfo' %}"></textarea>
         <button id="url-btn">Analyze</button>
     </form>
-    <form method="post" action="playlist_url">
-        <label for="album_url">Spotify album url</label>
-        <input type="url" name="playlist_url" id="album_url" placeholder="https://open.spotify.com/album/0Lg1uZvI312TPqxNWShFXL" required>
-        <input type="text" name="type" value="album" style="display: none;">
-        <button id="url-btn">Analyze</button>
-    </form>
-    <form method="post" action="playlist_file" enctype="multipart/form-data">
+    <h3>Or you can upload a file with the links instead if you have that stored.</h3>
+    <h3>You can manually select a file or drag and drop it down below.</h3>
+    <form method="post" action="playlist-file" enctype="multipart/form-data">
         <label for="tracks_file">File upload (spotify song urls)</label>
         <input type="file" name="tracks_file" id="tracks_file" required>
         <button id="file-btn">Analyze</button>
-    </form>
-    <form method="post" action="playlist_text">
-        <label for="tracks_text">Spotify track urls</label>
-        <textarea type="text" name="tracks_text" id="tracks_text" cols="100" rows="5" placeholder="https://open.spotify.com/track/0yLdNVWF3Srea0uzk55zFn&#10;https://open.spotify.com/track/1Qrg8KqiBpW07V7PNxwwwL&#10;https://open.spotify.com/track/6AQbmUe0Qwf5PZnt4HmTXv" required></textarea>
-        <button id="text-btn">Analyze</button>
     </form>
 </div>
 {% endblock %}
