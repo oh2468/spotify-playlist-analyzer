@@ -34,6 +34,7 @@ class SpotifyHandler:
     _SEARCH_LIMIT = 50
     _VALID_SEARCH_TYPES = ["playlist", "artist", "album"]
     _VALID_ARTIST_CONTENT_TYPES = ["album", "single", "compilation", "appears_on"]
+    _VALID_LINK_TYPES = ["playlist", "album", "track"]
     _MAX_MULTI_PLAYLIST = 3
     _MAX_MULTI_ALBUM = 5
 
@@ -106,6 +107,8 @@ class SpotifyHandler:
 
 
     def valid_spotify_urls(self, type, urls):
+        if type not in self._VALID_LINK_TYPES:
+            return None
         #valid = all(re.match(r"https://open.spotify.com/(playlist|track|album|artist)/\w{22}$", url) for url in urls)
         pattern = r"https://open.spotify.com/{type}/\w{{22}}$".format(type=type)
         valid = all(re.match(pattern, url) for url in urls)
