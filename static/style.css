@@ -169,6 +169,11 @@ table button {
     background-color: orange;
     border-radius: 12px;
     width: 40%;
+    margin-top: 0.5em;
+}
+
+.playlist-input > form > textarea {
+    resize: None;
 }
 
 .artist-info > a {
