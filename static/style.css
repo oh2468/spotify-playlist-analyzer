@@ -195,6 +195,7 @@ table button {
     padding: 0;
     margin: 0;
     font-size: larger;
+    list-style-position: inside;
 }
 
 #search-query {
