@@ -49,19 +49,6 @@ function goToUser(event) {
     window.location = userBase + user_search;
 }
 
-function populateMarketSelection(markets) {
-    var marketDropDown = document.getElementById("country-select");
-
-    markets.forEach(m => {
-        var option = document.createElement("option");
-        option.setAttribute("value", m["code"]);
-        option.text = m["name"];
-        marketDropDown.add(option);
-    });
-
-    updateSelectedMarket(marketDropDown.children, null);
-}
-
 function setMarket(event) {
     var option = event.target;
     var market = option.value;
@@ -70,12 +57,13 @@ function setMarket(event) {
     document.cookie = "market=" + market + "; SameSite=Strict; Secure; Path=/; Max-Age=3600";
     option.parentNode.classList.add("hide");
 
-    updateSelectedMarket(option.children, marketIndex);
+    updateSelectedMarket(marketIndex);
 }
 
-function updateSelectedMarket(marketList, newIndex) {
+function updateSelectedMarket(newIndex) {
     var oldIndex = sessionStorage.getItem("selectedMarketIndex");
     var cookie = document.cookie;
+    var marketList = document.getElementById("country-select").children;
 
     if(oldIndex === null && cookie) {
         var currMarket = cookie.split("market=")[1].split(";")[0];
@@ -86,6 +74,8 @@ function updateSelectedMarket(marketList, newIndex) {
             }
         }
     }
+
+    if(oldIndex === newIndex) { return; }
 
     oldIndex = oldIndex !== null  && cookie ? oldIndex : 0;
     newIndex = newIndex !== null ? newIndex : oldIndex;
@@ -228,16 +218,5 @@ try {
 
 
 document.addEventListener("DOMContentLoaded", () => {
-    markets = sessionStorage.getItem("markets");
-    if(markets) {
-        populateMarketSelection(JSON.parse(markets));
-    } else {
-        fetch("/markets")
-        .then(resp => resp.json())
-        .then(markets => {
-            sessionStorage.setItem("markets", JSON.stringify(markets));
-            populateMarketSelection(markets);
-        })
-        .catch(err => console.log(err));
-    }
+    updateSelectedMarket(null);
 });
