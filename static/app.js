@@ -153,6 +153,7 @@ function selectMultiAlbums(event) {
 }
 
 function submitMultiAlbums(event) {
+    event.preventDefault();
     var boxes = getSelectedBoxes();
 
     if (boxes.length > 5) {
@@ -161,7 +162,7 @@ function submitMultiAlbums(event) {
         return;
     } else {
         var selectedIds = boxes.map(box => box.value);
-        event.target.parentElement.href += selectedIds.join(",");
+        window.location = event.target.parentElement.href + selectedIds.join(",")
     }
 
 }
