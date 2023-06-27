@@ -75,8 +75,6 @@ function updateSelectedMarket(newIndex) {
         }
     }
 
-    if(oldIndex === newIndex) { return; }
-
     oldIndex = oldIndex !== null  && cookie ? oldIndex : 0;
     newIndex = newIndex !== null ? newIndex : oldIndex;
 
