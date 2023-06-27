@@ -25,6 +25,23 @@ def format_artists(artists):
     return ", ".join(artist["name"] for artist in artists)
 
 
+@app.context_processor
+def inject_base_data():
+    if sp_handler is None: return {}
+
+    spotify_markets = sp_handler.markets
+    mapped_markets = [{"code": code, "name": country_codes.code_to_name.get(code, code)} for code in spotify_markets]
+
+    limits = {
+        "playlist": sp_handler.MAX_MULTI_PLAYLIST,
+        "album": sp_handler.MAX_MULTI_ALBUM,
+        "track": sp_handler.MAX_MULTI_TRACK,
+    }
+
+    base = {"markets": mapped_markets, "limits": limits}
+    return {"base": base}
+
+
 def _do_analysis(analysis_data):
     _dump_data_for_testing(analysis_data)
     all_data = []
