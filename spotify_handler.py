@@ -263,10 +263,23 @@ class SpotifyHandler:
             raise ContentNotFoundError(f"No content found for the entred id(s): {', '.join(ids)}")
 
 
+    def _assert_number_of_ids(self, ids, cont_type):
+        match cont_type:
+            case "playlist":
+                limit = self.MAX_MULTI_PLAYLIST
+            case "album":
+                limit = self.MAX_MULTI_ALBUM
+            case "track":
+                limit = self.MAX_MULTI_TRACK
+        
+        if len(ids) > limit:
+            raise ValueError(f"Too many {cont_type} ids entered. The limit is {limit}")
+
+
+
     @_spotify_id_format_validator
     def get_playlist_analytics(self, playlist_ids, *, market=None):
-        if len(playlist_ids) > self.MAX_MULTI_PLAYLIST:
-            raise ValueError("Too many playlist ids entered.")
+        self._assert_number_of_ids(playlist_ids, "playlist")
 
         all_analysis_results = []
         
@@ -292,6 +305,8 @@ class SpotifyHandler:
 
     @_spotify_id_format_validator
     def get_tracks_analytics(self, track_ids, *, market=None):
+        self._assert_number_of_ids(track_ids, "track")
+
         spotify_tracks = self._loop_requests_with_limit(self._TRACKS_URL, track_ids, self._TRACK_ID_LIMIT, market)
         
         self._write_json_content_to_file(spotify_tracks, "tracks")
@@ -304,8 +319,7 @@ class SpotifyHandler:
 
     @_spotify_id_format_validator
     def get_album_analytics(self, album_ids, *, market=None):
-        if len(album_ids) > self.MAX_MULTI_ALBUM:
-            raise ValueError("Too many album ids entered.")
+        self._assert_number_of_ids(album_ids, "album")
 
         albums = self._get_request_to_json_response(self._ALBUM_MULTI_URL.format(ids=",".join(album_ids)), market)
         albums = [album for album in albums["albums"] if album]
