@@ -44,6 +44,11 @@
                 <li class="menu-expand hide">
                     <select name="country-select" id="country-select">
                         <option value="ALL">ALL</option>
+                        {% if base %}
+                            {% for market in base.markets %}
+                                <option value="{{ market.code }}">{{ market.name }}</option>
+                            {% endfor %}
+                        {% endif %}
                     </select>
                 </li>
             </ul>
