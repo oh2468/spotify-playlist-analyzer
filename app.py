@@ -232,14 +232,6 @@ def user_playlists(username):
     return render_template("user.html", data=data), return_code
 
 
-@app.get("/markets")
-def get_markets():
-    if sp_handler is None: return ""
-    spotify_markets = sp_handler.markets
-    mapped_markets = [{"code": code, "name": country_codes.code_to_name.get(code, code)} for code in spotify_markets]
-    return mapped_markets
-
-
 @app.get("/test")
 def testing_charts():
     test_data = _get_data_for_testing()
