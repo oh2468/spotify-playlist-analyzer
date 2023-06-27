@@ -35,8 +35,9 @@ class SpotifyHandler:
     _VALID_SEARCH_TYPES = ["playlist", "artist", "album"]
     _VALID_ARTIST_CONTENT_TYPES = ["album", "single", "compilation", "appears_on"]
     _VALID_LINK_TYPES = ["playlist", "album", "track"]
-    _MAX_MULTI_PLAYLIST = 3
-    _MAX_MULTI_ALBUM = 5
+    MAX_MULTI_PLAYLIST = 3
+    MAX_MULTI_ALBUM = 5
+    MAX_MULTI_TRACK = 1000
 
 
     def __init__(self):
@@ -264,7 +265,7 @@ class SpotifyHandler:
 
     @_spotify_id_format_validator
     def get_playlist_analytics(self, playlist_ids, *, market=None):
-        if len(playlist_ids) > self._MAX_MULTI_PLAYLIST:
+        if len(playlist_ids) > self.MAX_MULTI_PLAYLIST:
             raise ValueError("Too many playlist ids entered.")
 
         all_analysis_results = []
@@ -303,7 +304,7 @@ class SpotifyHandler:
 
     @_spotify_id_format_validator
     def get_album_analytics(self, album_ids, *, market=None):
-        if len(album_ids) > self._MAX_MULTI_ALBUM:
+        if len(album_ids) > self.MAX_MULTI_ALBUM:
             raise ValueError("Too many album ids entered.")
 
         albums = self._get_request_to_json_response(self._ALBUM_MULTI_URL.format(ids=",".join(album_ids)), market)
