@@ -1,4 +1,4 @@
-Max links to analyze - playlists: 3 OR albums: 5 OR tracks: 3000
+Max links to analyze - playlists: {{ base.limits.playlist }} OR albums: {{ base.limits.album }} OR tracks: {{ base.limits.track }}
 Enter the spotify links in here like following.
 
 https://open.spotify.com/playlist/37i9dQZEVXbMDoHDwVN2tF
