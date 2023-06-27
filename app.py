@@ -58,26 +58,6 @@ def _do_analysis(analysis_data):
     return render_template("analysis.html", all_data=all_data)
 
 
-def _analyze_tracks(track_urls, track_display_title="< individual track urls >"):
-    if not (track_ids := sp_handler.valid_spotify_urls("track", track_urls)):
-        return _return_flash_error(["Invalid spotify track url(s) entered in the text."])
-    
-    analysis_data = sp_handler.get_tracks_analytics(track_ids, market=_get_market_from_cookie())
-    analysis_data.name = track_display_title
-    return _do_analysis([analysis_data])
-
-
-def _return_flash_error(error_msgs):
-    for msg in error_msgs:
-        flash(msg)
-    return redirect(url_for("index"))
-
-
-def _get_market_from_cookie():
-    user_market = request.cookies.get("market", None)
-    return user_market if user_market in country_codes.code_to_name else None
-
-
 def _error_handler(func):
     @wraps(func)
     def handler(*args, **kwargs):
@@ -98,6 +78,27 @@ def _error_handler(func):
         except ValueError as err:
             return _return_flash_error([str(err)])
     return handler
+
+
+@_error_handler
+def _analyze_tracks(track_urls, track_display_title="< individual track urls >"):
+    if not (track_ids := sp_handler.valid_spotify_urls("track", track_urls)):
+        return _return_flash_error(["Invalid spotify track url(s) entered in the text."])
+    
+    analysis_data = sp_handler.get_tracks_analytics(track_ids, market=_get_market_from_cookie())
+    analysis_data.name = track_display_title
+    return _do_analysis([analysis_data])
+
+
+def _return_flash_error(error_msgs):
+    for msg in error_msgs:
+        flash(msg)
+    return redirect(url_for("index"))
+
+
+def _get_market_from_cookie():
+    user_market = request.cookies.get("market", None)
+    return user_market if user_market in country_codes.code_to_name else None
 
 
 def _dump_data_for_testing(data):
