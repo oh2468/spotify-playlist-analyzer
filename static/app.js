@@ -158,7 +158,7 @@ function submitMultiAlbums(event) {
     } else if (boxes.length == 0) {
         return;
     } else {
-        var selectedIds = boxes.map(box => box.value);
+        var selectedIds = boxes.map(box => box.dataset.value);
         window.location = compareButton.href + selectedIds.join(",")
     }
 }
