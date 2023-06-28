@@ -176,6 +176,7 @@ th, td {
 
 .playlist-input > form > textarea {
     resize: None;
+    white-space: pre;
 }
 
 .artist-info > a {
@@ -283,6 +284,10 @@ th, td {
 @media screen and (max-width:1050px){
     .menu-expand, .data-chart {
         width: 100%;
+    }
+
+    .playlist-input textarea {
+        width: 95%;
     }
 }
 
