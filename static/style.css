@@ -128,6 +128,10 @@ th, td {
     background-color: orange;
 }
 
+#current-country {
+    color: yellow;
+}
+
 
 /* Style the main body content */
 .content {
@@ -182,6 +186,10 @@ th, td {
     color: chartreuse;
 }
 
+.search-query {
+    color: orange;
+}
+
 
 /* Style the error messages */
 .flashes * {
@@ -194,15 +202,6 @@ th, td {
     margin: 0;
     font-size: larger;
     list-style-position: inside;
-}
-
-.search-query {
-    color: orange;
-}
-
-
-#current-country {
-    color: yellow;
 }
 
 
@@ -287,6 +286,8 @@ th, td {
     }
 }
 
+
+/* overide all other classes when this is active */
 .hide {
     display: none;
 }
