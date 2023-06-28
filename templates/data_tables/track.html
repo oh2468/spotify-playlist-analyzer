@@ -1,15 +1,15 @@
 <thead>
     <tr>
-        <th value="number">No.</th>
-        <th value="string">Name</th>
-        <th value="string">Artists</th>
-        <th value="string">Album</th>
-        <th value="string">Duration</th>
-        <th value="number">Popularity</th>
-        <th value="string">Release Date</th>
-        <th value="string">Id</th>
-        <th value="string">Image</th>
-        <th value="string"></th>
+        <th data-type="number">No.</th>
+        <th data-type="string">Name</th>
+        <th data-type="string">Artists</th>
+        <th data-type="string">Album</th>
+        <th data-type="string">Duration</th>
+        <th data-type="number">Popularity</th>
+        <th data-type="string">Release Date</th>
+        <th data-type="string">Id</th>
+        <th data-type="string">Image</th>
+        <th data-type="string"></th>
     </tr>
 </thead>
 <tbody>
@@ -24,7 +24,7 @@
         <td>{{ res["album"]["release_date"] }}</td>
         <td>{{ res["id"] }}</td>
         {% if res["album"]["images"][0] %}
-            <td value='{{ res["album"]["images"][0]["url"] }}'><a href='{{ res["album"]["images"][0]["url"] }}' target="_blank" rel="noopener noreferrer">Image link</a></td>
+            <td data-value='{{ res["album"]["images"][0]["url"] }}'><a href='{{ res["album"]["images"][0]["url"] }}' target="_blank" rel="noopener noreferrer">Image link</a></td>
         {% else %}
             <td>no image found</td>
         {% endif %}

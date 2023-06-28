@@ -1,13 +1,13 @@
 <thead>
     <tr>
-        <th value="number">No.</th>
-        <th value="string">Name</th>
-        <th value="number">Popularity</th>
-        <th value="number">Followers</th>
-        <th value="string">Genres</th>
-        <th value="string">Id</th>
-        <th value="string">Image</th>
-        <th value="string"></th>
+        <th data-type="number">No.</th>
+        <th data-type="string">Name</th>
+        <th data-type="number">Popularity</th>
+        <th data-type="number">Followers</th>
+        <th data-type="string">Genres</th>
+        <th data-type="string">Id</th>
+        <th data-type="string">Image</th>
+        <th data-type="string"></th>
     </tr>
 </thead>
 <tbody>
@@ -20,7 +20,7 @@
         <td>{{ res["genres"]|join(", ") }}</td>
         <td>{{ res["id"] }}</td>
         {% if res["images"][0] %}
-            <td value='{{ res["images"][0]["url"] }}'><a href='{{ res["images"][0]["url"] }}' target="_blank" rel="noopener noreferrer">Image link</a></td>
+            <td data-value='{{ res["images"][0]["url"] }}'><a href='{{ res["images"][0]["url"] }}' target="_blank" rel="noopener noreferrer">Image link</a></td>
         {% else %}
             <td>no image found</td>
         {% endif %}

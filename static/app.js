@@ -9,17 +9,18 @@ function sortTable(event) {
     var headers = Array.from(table.querySelectorAll("th"))
     var data_table = table.querySelector("tbody");
     var colNo = headers.indexOf(element);
+    var sortType = element.dataset.type;
 
     column_sort_toggle = previous_column_sort === colNo ? !column_sort_toggle : false;
     previous_column_sort = colNo;
 
     var analysis_table_data = Array.from(data_table.children);
 
-    if (element.getAttribute("value") === "string") {
+    if (sortType === "string") {
         var sorted = analysis_table_data.sort((a, b) => a.children[colNo].innerText.toLowerCase() > b.children[colNo].innerText.toLowerCase());
-    } else if (element.getAttribute("value") === "number") {
+    } else if (sortType === "number") {
         var sorted = analysis_table_data.sort((a, b) => Number(a.children[colNo].innerText) > Number(b.children[colNo].innerText));
-    } else if (element.getAttribute("value") === "check") {
+    } else if (sortType === "check") {
         var sorted = analysis_table_data.sort((a, b) => a.children[colNo].firstChild.checked >= b.children[colNo].firstChild.checked);
     } else {
         return;
