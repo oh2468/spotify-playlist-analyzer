@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, abort, flash, session
-from spotify_handler import SpotifyHandler, ContentNotFoundError, InvalidIdFormatError, AnalysisResult
-from datetime import timedelta
+from spotify_handler import SpotifyHandler, ContentNotFoundError, InvalidIdFormatError
 from functools import wraps
 import playlist_analyzer
 import country_codes
@@ -16,7 +15,6 @@ sp_handler = SpotifyHandler()
 
 @app.template_filter("format_time")
 def format_time(t):
-    # return str(timedelta(milliseconds=t)).split(".")[0]
     return playlist_analyzer.time_formatter(t)
 
 

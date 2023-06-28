@@ -3,7 +3,7 @@
 {% block header %}
 {% for data in all_data %}
 <div class="analysis-title {% if loop.index0 > 0 %}hide{% endif %}">
-    <h1>{% block title %}Analysis{% endblock %} for {{ data.type }}: <span id="search-query">{{ data.name }}</span></h1>
+    <h1>{% block title %}Analysis{% endblock %} for {{ data.type }}: <span class="search-query">{{ data.name }}</span></h1>
     <h2>Showing analysis for {{ data.tracks|length }} of {{ data.total }} tracks</h2>
 </div>
 {% endfor %}
@@ -35,23 +35,22 @@
             
             <div class="tab-content">
                 <div class="tab-page">
-                    <table id="analysis-result-table">
+                    <table>
                         <thead>
                             <tr>
-                                <th value="number">No.</th>
-                                <th value="string">Title</th>
-                                <th value="string">Artist</th>
-                                <th value="string">Album</th>
-                                <!-- <th value="string">Genre</th> -->
-                                <th value="string">Duration</th>
-                                <th value="number">Popularity</th>
-                                <th value="number">BPM</th>
-                                <th value="number">Danceability</th>
-                                <th value="number">Energy</th>
-                                <th value="number">Valence</th>
-                                <th value="number">Key</th>
-                                <th value="number">Mode</th>
-                                <th value="string">Id</th>
+                                <th data-type="number">No.</th>
+                                <th data-type="string">Title</th>
+                                <th data-type="string">Artist</th>
+                                <th data-type="string">Album</th>
+                                <th data-type="string">Duration</th>
+                                <th data-type="number">Popularity</th>
+                                <th data-type="number">BPM</th>
+                                <th data-type="number">Danceability</th>
+                                <th data-type="number">Energy</th>
+                                <th data-type="number">Valence</th>
+                                <th data-type="number">Key</th>
+                                <th data-type="number">Mode</th>
+                                <th data-type="string">Id</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -61,7 +60,6 @@
                                 <td>{{ tr["track"]["name"] }}</td>
                                 <td>{{ tr["track"]["artists"]|format_artists }}</td>
                                 <td>{{ tr["track"]["album"]["name"] }}</td>
-                                <!-- <td>{{ tr["track"]["is_local"] }}</td> -->
                                 <td>{{ tr["track"]["duration_ms"] | format_time }}</td>
                                 <td>{{ tr["track"]["popularity"] }}</td>
                                 <td>{{ tr["audio_feature"]["tempo"]|round|int }}</td>
@@ -81,7 +79,7 @@
                 <div class="tab-page hide">
                     {% for chart in charts %}
                     <div class="data-chart">
-                        <embed type="image/svg+xml" src="{{ chart|safe }}"/>
+                        <embed type="image/svg+xml" src="{{ chart|safe }}">
                         <button class="chart-button" type="button">Open chart in a new tab</button>
                     </div>
                     {% endfor %}

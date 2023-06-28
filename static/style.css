@@ -196,7 +196,7 @@ th, td {
     list-style-position: inside;
 }
 
-#search-query {
+.search-query {
     color: orange;
 }
 

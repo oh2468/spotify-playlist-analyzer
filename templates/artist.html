@@ -37,7 +37,7 @@
         </div>
         
         <div class="tab-page hide" id="artist-singles">
-            <table id="artist-singles-table">
+            <table>
                 {% with results = data["singles"] %}
                     {% include "data_tables/album.html" %}
                 {% endwith %}
@@ -45,7 +45,7 @@
         </div>
         
         <div class="tab-page hide" id="artist-compilations">
-            <table id="artist-compilations-table">
+            <table>
                 {% with results = data["compilations"] %}
                     {% include "data_tables/album.html" %}
                 {% endwith %}
@@ -53,7 +53,7 @@
         </div>
         
         <div class="tab-page hide" id="artist_appears_on">
-            <table id="artist-appears-on-table">
+            <table>
                 {% with results = data["appears_on"] %}
                     {% include "data_tables/album.html" %}
                 {% endwith %}
@@ -61,7 +61,7 @@
         </div>
 
         <div class="tab-page hide" id="related_artists">
-            <table id="artist-appears-on-table">
+            <table>
                 {% with results = data["related_artists"] %}
                     {% include "data_tables/artist.html" %}
                 {% endwith %}

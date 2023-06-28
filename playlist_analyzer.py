@@ -5,8 +5,6 @@ from pygal.style import DarkGreenBlueStyle
 from pygal.style import Style
 
 
-# with open("spotify_responses/analysis.json", "r", encoding="UTF-8") as file: data = json.load(file)
-
 chart_js_code = ["file://static/pygal.js"]
 
 def key_mode_value(k, m):
@@ -16,7 +14,6 @@ def key_mode_value(k, m):
 def key_mode_string(k, m, v=None):
     # print(f"k: {k}, m: {m}, v: {v}")
     if v:
-        # v = int(v)
         return f"{key_string_map[v // 2]} - {mode_string_map[v % 2]}"
     else:
         return f"{key_string_map[k]} - {mode_string_map[m]}"
@@ -27,7 +24,6 @@ def time_formatter(time_ms):
 
 
 def time_signature_formatter(time_sig):
-    # return f"{int(time_sig) + 3}/4"
     return f"{int(time_sig)}/4"
 
 
@@ -133,9 +129,8 @@ def get_data_charts(data):
     line_plot_style = Style(colors=["#000000"])
     for key in line_plots:
         line_plot = pygal.Line(show_legend=False, dots_size=5, style=line_plot_style, js=chart_js_code)
-        # line_plot = pygal.Line(show_legend=False, dots_size=5, style={"colors": ["#007700"]})
         line_plot.title = f"Song {plot_titles.get(key, key.capitalize())}"
-        # print(seperated_data[key]["total"])
+
         line_plot.add(key, seperated_data[key]["data"])
         line_plot.x_labels = name_strings
 
@@ -148,7 +143,6 @@ def get_data_charts(data):
 
         if key == "time_signature":
             line_plot.max_scale = 5
-            # line_plot.range = (1, 5)
             line_plot.range = (3, 7)
             line_plot.x_labels = line_plot.x_labels[1:]
             line_plot.value_formatter = time_signature_formatter
