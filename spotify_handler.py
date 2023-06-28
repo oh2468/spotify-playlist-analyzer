@@ -167,29 +167,24 @@ class SpotifyHandler:
             #print("valid response")
             return response
         elif response.status_code == 401:
-            print(response)
+            # print(response)
             self._renew_token()
             response.request.headers = self._session.headers
             new_response = self._session.send(response.request)
             return self._validate_response(new_response, tries + 1)
         elif response.status_code == 404:
-            print("....ERROR....")
-            print(response)
-            print(response.json())
-            # TODO
-            # decide how to handle 404 Not Found - The requested resource could not be found. 
-            # This error can be due to a temporary or permanent condition.
-            # for now return the response
-            #return response
+            # print("....ERROR....")
+            # print(response)
+            # print(response.json())
             raise ContentNotFoundError(response.json())
         else:
             # handle unknown error here
-            print(response)
+            # print(response)
             return None
 
 
     def _recurse_all_page_items(self, data, market=None):
-        print("iterating pages")
+        # print("iterating pages")
         if not data["next"]:
             return data["items"]
         else:
@@ -232,7 +227,7 @@ class SpotifyHandler:
             add_market = f"&market={market}" if "?" in formatted_url else f"?market={market}"
             formatted_url = f"{formatted_url}{add_market}"
         
-        print(formatted_url)
+        # print(formatted_url)
         
         response = self._session.get(formatted_url)
         response = self._validate_response(response)
@@ -452,7 +447,10 @@ class AnalysisResult:
             missing_track_ids = set(self.track_map.keys()) - {track["track"]["id"] for track in self.audio_features}
             self.missing_tracks = [self.track_map[id] for id in missing_track_ids]
 
-        # self._write_json_content_to_file(self.missing_tracks, "analysis_missing")
-        with open("spotify_responses/analysis_missing.json", "w", encoding="UTF-8") as file:
-            json.dump(self.missing_tracks, file)
+        # try:
+        #     with open("spotify_responses/analysis_missing.json", "w", encoding="UTF-8") as file:
+        #         json.dump(self.missing_tracks, file)
+        # except:
+        #     # failed to write to the file, folder may be missing
+        #     pass
 
