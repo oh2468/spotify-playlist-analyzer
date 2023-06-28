@@ -8,7 +8,7 @@
         <th value="string">Release Date</th>
         <th value="string">Id</th>
         <th value="string">Image</th>
-        <th value=""><a href="/album/"><button id="compare-btn" class="hide" type="button">Compare Albums</button></a></th>
+        <th value=""><a class="table-button compare-button hide" href="/album/">Compare Albums</a></th>
     </tr>
 </thead>
 <tbody>
@@ -26,7 +26,7 @@
         {% else %}
             <td>no image found</td>
         {% endif %}
-        <td><a href="/album/{{ res['id'] }}"><button type="button">Analyze Album</button></a></td>
+        <td><a class="table-button" href="/album/{{ res['id'] }}">Analyze Album</a></td>
     </tr>
     {% endfor %}
 </tbody>

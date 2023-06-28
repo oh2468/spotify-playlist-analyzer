@@ -8,7 +8,7 @@
         <th value="number">No. Songs</th>
         <th value="string">Collaborative</th>
         <th value="string">Id</th>
-        <th value=""><a href="/playlist/"><button id="compare-btn" class="hide" type="button">Compare Playlists</button></a></th>
+        <th value=""><a class="table-button compare-button hide" href="/playlist/">Compare Playlists</a></th>
     </tr>
 </thead>
 <tbody>
@@ -22,7 +22,7 @@
         <td>{{ res["tracks"]["total"] }}</td>
         <td>{{ res["collaborative"] }}</td>
         <td>{{ res["id"] }}</td>
-        <td><a href="/playlist/{{ res['id'] }}"><button type="button">Analyze</button></a></td>
+        <td><a class="table-button" href="/playlist/{{ res['id'] }}">Analyze playlist</a></td>
     </tr>
     {% endfor %}
 </tbody>
