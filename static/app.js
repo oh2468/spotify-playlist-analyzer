@@ -145,9 +145,10 @@ function selectMultiAlbums(event) {
 function submitMultiAlbums(event) {
     event.preventDefault();
     var [compareButton, boxes] = getButtonAndSelectedBoxes(event);
+    var typeLimit = compareButton.dataset.limit;
 
-    if (boxes.length > 5) {
-        alert("Too many boxes selected... Max number of selections is: 5");
+    if (boxes.length > typeLimit) {
+        alert("Too many boxes selected... Max number of selections is: " + typeLimit);
     } else if (boxes.length == 0) {
         return;
     } else {
