@@ -9,10 +9,6 @@ body {
     background-color: limegreen;
 }
 
-.hide {
-    display: none;
-}
-
 .center {
     text-align: center;
 }
@@ -65,14 +61,16 @@ th, td {
     padding: 0.4em;
 }
 
-table button {
+.table-button {
     background-color: black;
     color: white;
     border-radius: 6px;
     border: 1px solid black;
+    display: block;
+    text-decoration: None;
 }
 
-#compare-btn {
+.compare-button {
     background-color: limegreen;
 }
 
@@ -287,4 +285,8 @@ table button {
     .menu-expand, .data-chart {
         width: 100%;
     }
+}
+
+.hide {
+    display: none;
 }
