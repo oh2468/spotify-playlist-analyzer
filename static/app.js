@@ -124,25 +124,27 @@ function switchTabs(event) {
     }
 }
 
-function getSelectedBoxes() {
-    return Array.from(document.getElementsByClassName("compare-check")).filter(box => box.checked);
+function getButtonAndSelectedBoxes(event) {
+    var table = event.target.closest("table");
+    var compareButton = table.querySelector(".compare-button");
+    var boxes = table.querySelector("tbody").querySelectorAll(".compare-check");
+
+    return [compareButton, Array.from(boxes).filter(box => box.checked)];
 }
 
 function selectMultiAlbums(event) {
-    var compareButton = document.getElementById("compare-btn");
-    var boxes = getSelectedBoxes();
+    var [compareButton, boxes] = getButtonAndSelectedBoxes(event);
 
     if(boxes.length == 0) {
         compareButton.classList.add("hide");
     } else {
         compareButton.classList.remove("hide");
     }
-
 }
 
 function submitMultiAlbums(event) {
     event.preventDefault();
-    var boxes = getSelectedBoxes();
+    var [compareButton, boxes] = getButtonAndSelectedBoxes(event);
 
     if (boxes.length > 5) {
         alert("Too many boxes selected... Max number of selections is: 5");
@@ -150,9 +152,8 @@ function submitMultiAlbums(event) {
         return;
     } else {
         var selectedIds = boxes.map(box => box.value);
-        window.location = event.target.parentElement.href + selectedIds.join(",")
+        window.location = compareButton.href + selectedIds.join(",")
     }
-
 }
 
 function openChartInNewTab(event) {
@@ -202,12 +203,12 @@ Array.from(document.getElementsByClassName("chart-button")).forEach(element => {
     element.addEventListener("click", openChartInNewTab);
 });
 
+Array.from(document.getElementsByClassName("compare-button")).forEach(element => {
+    element.addEventListener("click", submitMultiAlbums);
+});
+
 document.getElementById("user-form").addEventListener("submit", goToUser);
 document.getElementById("country-select").addEventListener("change", setMarket);
-
-try {
-    document.getElementById("compare-btn").addEventListener("click", submitMultiAlbums)
-} catch(err) {}
 
 try {
     document.getElementById("tracks_file").addEventListener("dragover", fileDrag);
