@@ -3,8 +3,13 @@ var previous_column_sort;
 var current_tab = null;
 
 
-function sortTable(event, element, colNo) {
-    var data_table = event.target.closest("table").querySelector("tbody");
+function sortTable(event) {
+    var element = event.target;
+    var table = event.target.closest("table");
+    var headers = Array.from(table.querySelectorAll("th"))
+    var data_table = table.querySelector("tbody");
+    var colNo = headers.indexOf(element);
+
     column_sort_toggle = previous_column_sort === colNo ? !column_sort_toggle : false;
     previous_column_sort = colNo;
 
@@ -176,11 +181,9 @@ function fileDrop(event) {
 }
 
 
-document.querySelectorAll("th")
-    .forEach((element, columnNo) => {
-        element.addEventListener("click", event => sortTable(event, element, columnNo));
-    }
-);
+document.querySelectorAll("th").forEach(element => {
+    element.addEventListener("click", sortTable);
+});
 
 Array.from(document.getElementsByClassName("menu-item")).forEach(element => {
     element.addEventListener("click", event => expandNavbar(event, element));
