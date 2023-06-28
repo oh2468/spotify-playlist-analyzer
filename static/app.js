@@ -133,7 +133,7 @@ function switchTabs(event) {
 function getButtonAndSelectedBoxes(event) {
     var table = event.target.closest("table");
     var compareButton = table.querySelector(".compare-button");
-    var boxes = table.querySelector("tbody").querySelectorAll(".compare-check");
+    var boxes = table.querySelectorAll(".compare-check");
 
     return [compareButton, Array.from(boxes).filter(box => box.checked)];
 }
