@@ -6,11 +6,13 @@ import country_codes
 import pickle
 
 
+DEBUG_MODE = True
+
 app = Flask(__name__)
 app.secret_key = "RANDOMSECRETKEY1"
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024 # max file size = 2MB
 sp_handler = None
-sp_handler = SpotifyHandler()
+sp_handler = SpotifyHandler(DEBUG_MODE)
 
 
 @app.template_filter("format_time")
@@ -51,7 +53,7 @@ def _do_analysis(analysis_data):
         data["total"] = analysis.total
         data["missing"] = analysis.missing_tracks
         data["descriptions"] = playlist_analyzer.data_descriptions
-        data["charts"] = playlist_analyzer.get_data_charts(data["tracks"])
+        data["charts"] = playlist_analyzer.get_data_charts(data["tracks"], DEBUG_MODE)
         all_data.append(data)
     return render_template("analysis.html", all_data=all_data)
 
@@ -100,8 +102,9 @@ def _get_market_from_cookie():
 
 
 def _dump_data_for_testing(data):
-    with open("spotify_responses/pickled_data", "wb") as file:
-        pickle.dump(data, file)
+    if DEBUG_MODE:
+        with open("spotify_responses/pickled_data", "wb") as file:
+            pickle.dump(data, file)
 
 
 def _get_data_for_testing():
@@ -230,11 +233,11 @@ def user_playlists(username):
     
     return render_template("user.html", data=data), return_code
 
-
-@app.get("/test")
-def testing_charts():
-    test_data = _get_data_for_testing()
-    return _do_analysis(test_data)
+if DEBUG_MODE:
+    @app.get("/test")
+    def testing_charts():
+        test_data = _get_data_for_testing()
+        return _do_analysis(test_data)
 
 
 @app.errorhandler(404)
@@ -249,5 +252,4 @@ def error_405(error):
 
 
 if __name__ == "__main__":
-    #app.run(debug=True)
-    app.run()
+    app.run(debug=DEBUG_MODE)

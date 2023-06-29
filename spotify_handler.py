@@ -3,12 +3,11 @@ import re
 import json
 import time
 from pathlib import Path
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, InitVar
 from collections import defaultdict
 
 
 class SpotifyHandler:
-    _DEBUG_MODE = True
     _FILE_DIR = Path(__file__).parent
     _OUTPUT_DIR = Path(_FILE_DIR, "spotify_responses")
     _API_KEY_FILE = Path(_FILE_DIR, "api_token.txt")
@@ -40,7 +39,8 @@ class SpotifyHandler:
     MAX_MULTI_TRACK = 1000
 
 
-    def __init__(self):
+    def __init__(self, debug_mode=False):
+        self._DEBUG_MODE = debug_mode
         self._session = requests.Session()
         self._bearer = ""
         self._markets = []
@@ -291,7 +291,7 @@ class SpotifyHandler:
             af_tracks_joined = self._get_audio_features(track_map)
             track_map |= {track["track"]["uri"]: track for track in spotify_tracks if track["is_local"] and track["track"]}
 
-            all_analysis_results.append(AnalysisResult(playlist["name"], playlist["type"], playlist["tracks"]["total"], track_map, af_tracks_joined))
+            all_analysis_results.append(AnalysisResult(playlist["name"], playlist["type"], playlist["tracks"]["total"], track_map, af_tracks_joined, self._DEBUG_MODE))
         
         self._validate_output(all_analysis_results, playlist_ids)
 
@@ -309,7 +309,7 @@ class SpotifyHandler:
         track_map = {track["id"]: {"track": track} for track in spotify_tracks if track}
         af_tracks_joined = self._get_audio_features(track_map)
 
-        return AnalysisResult("", "track", len(track_ids), track_map, af_tracks_joined)
+        return AnalysisResult("", "track", len(track_ids), track_map, af_tracks_joined, self._DEBUG_MODE)
 
 
     @_spotify_id_format_validator
@@ -349,7 +349,7 @@ class SpotifyHandler:
                 features.append(track_feat)
             
             album = album_map[al_id]
-            separated_albums.append(AnalysisResult(album["name"], album["type"], album["total_tracks"], track_map, features))
+            separated_albums.append(AnalysisResult(album["name"], album["type"], album["total_tracks"], track_map, features, self._DEBUG_MODE))
 
         return separated_albums
 
@@ -438,19 +438,22 @@ class AnalysisResult:
     total: int
     track_map: dict
     audio_features: list
+    debug_mode: InitVar[bool]
     missing_tracks: list = field(init=False)
 
-    def __post_init__(self):
+    def __post_init__(self, debug_mode):
         if len(self.audio_features) == self.total:
             self.missing_tracks = []
         else:
             missing_track_ids = set(self.track_map.keys()) - {track["track"]["id"] for track in self.audio_features}
             self.missing_tracks = [self.track_map[id] for id in missing_track_ids]
 
-        # try:
-        #     with open("spotify_responses/analysis_missing.json", "w", encoding="UTF-8") as file:
-        #         json.dump(self.missing_tracks, file)
-        # except:
-        #     # failed to write to the file, folder may be missing
-        #     pass
+        if debug_mode:
+            try:
+                output_dir = SpotifyHandler._OUTPUT_DIR
+                with open(f"{output_dir}/analysis_missing.json", "w", encoding="UTF-8") as file:
+                    json.dump(self.missing_tracks, file)
+            except:
+                # failed to write to the file, folder may be missing
+                pass
 

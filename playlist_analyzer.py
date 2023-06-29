@@ -3,9 +3,12 @@ from collections import Counter
 from datetime import timedelta
 from pygal.style import DarkGreenBlueStyle
 from pygal.style import Style
+from pathlib import Path
 
 
 chart_js_code = ["file://static/pygal.js"]
+_DEBUG_OUTPUT_DIR = Path(Path(__file__).parent, "pygal_tests")
+
 
 def key_mode_value(k, m):
     return (k * 2) + m
@@ -94,10 +97,12 @@ data_descriptions = {
 }
 
 
-def get_data_charts(data):
-    print(f"LENGTH OF DATA: {len(data)}")
+def get_data_charts(data, debug_mode=False):
+    # print(f"LENGTH OF DATA: {len(data)}")
     if not data:
         return {}
+
+    debug_charts = {}
 
     seperated_data = {key: {"data": [], "total": 0} for key in data_keys}
     total_songs = len(data)
@@ -153,7 +158,7 @@ def get_data_charts(data):
         if key == "tempo":
             line_plot.value_formatter = float_to_int_rounder
 
-        #line_plot.render_to_file(f"pygal_tests/tests_2/line_plot_{key}.svg")
+        debug_charts[f"line_plot_{key}"] = line_plot
         data_charts[key].append(line_plot.render_data_uri())
 
 
@@ -167,7 +172,7 @@ def get_data_charts(data):
     for box in collected_box_plot:
         box_plot.add(box, seperated_data[box]["data"])
 
-    #box_plot.render_to_file("pygal_tests/tests_2/box_plot_collected.svg")
+    debug_charts["box_plot_collected"] = box_plot
     data_charts["collected"].append(box_plot.render_data_uri())
 
 
@@ -180,7 +185,7 @@ def get_data_charts(data):
     xy_plot.y_labels = key_string_map
     xy_plot.x_labels = range(1, total_songs + 1)
 
-    # xy_plot.render_to_file("pygal_tests/tests_2/xy_plot_key_mode.svg")
+    debug_charts["xy_plot_key_mode"] = xy_plot
     data_charts["key"].append(xy_plot.render_data_uri())
 
 
@@ -194,7 +199,7 @@ def get_data_charts(data):
         )
     pie_plot.value_formatter = lambda x: f"{x}/{total_songs} = {round(100 * (x / total_songs), 2)}%"
 
-    # pie_plot.render_to_file("pygal_tests/tests_2/pie_plot_key_mode.svg")
+    debug_charts["pie_plot_key_mode"] = pie_plot
     data_charts["key"].append(pie_plot.render_data_uri())
 
     for key in box_plots:
@@ -212,7 +217,15 @@ def get_data_charts(data):
         if key == "tempo":
             box_plot.value_formatter = float_to_int_rounder
 
-        # box_plot.render_to_file("pygal_tests/tests_2/box_plot_tempo.svg")
+        debug_charts[f"box_plot_{key}"] = box_plot
         data_charts[key].append(box_plot.render_data_uri())
+
+    if debug_mode:
+        try:
+            for name, plot in debug_charts.items():
+                plot.render_to_file(f"{_DEBUG_OUTPUT_DIR}/{name}.svg")
+        except Exception as ex:
+            print(f"Failed writing the data to the file location: {_DEBUG_OUTPUT_DIR}")
+
 
     return data_charts
