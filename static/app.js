@@ -181,6 +181,12 @@ function fileDrop(event) {
     event.target.files = dt.files;
 }
 
+function toggleLoadingDiv(event) {
+    if(event.target.pathname !== "/") {
+        document.getElementById("loading-div").classList.toggle("hide");
+    }
+}
+
 
 document.querySelectorAll("th").forEach(element => {
     element.addEventListener("click", sortTable);
@@ -212,8 +218,18 @@ Array.from(document.getElementsByClassName("compare-button")).forEach(element =>
     element.addEventListener("click", submitMultiAlbums);
 });
 
+Array.from(document.getElementsByTagName("a")).forEach(element => {
+    element.addEventListener("click", toggleLoadingDiv);
+});
+
+Array.from(document.getElementsByTagName("form")).forEach(element => {
+    element.addEventListener("submit", toggleLoadingDiv);
+});
+
 document.getElementById("user-form").addEventListener("submit", goToUser);
 document.getElementById("country-select").addEventListener("change", setMarket);
+document.getElementById("loading-button").addEventListener("click", toggleLoadingDiv);
+
 
 try {
     document.getElementById("tracks_file").addEventListener("dragover", fileDrag);
@@ -224,3 +240,8 @@ try {
 document.addEventListener("DOMContentLoaded", () => {
     updateSelectedMarket(null);
 });
+
+
+window.addEventListener("pageshow", () => {
+    document.getElementById("loading-div").classList.add("hide");
+})
