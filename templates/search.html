@@ -2,8 +2,6 @@
 
 {% block header %}
 <h1>{% block title %}Search{% endblock %} results for {{ data.search_type }}: <span class="search-query">{{ data.search_query }}</span></h1>
-<!-- <h3>{{ data.search_type|capitalize }} search</h3> -->
-<!-- <h4>Showing search result for {{ data[data.key]|count }} of {{ data.total }} {{ data.search_type }}s.</h4> -->
 <h2>Showing {{ data.results|count }} of {{ data.total }} {{ data.search_type }}s</h2>
 {% endblock %}
 
