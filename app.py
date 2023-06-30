@@ -129,13 +129,13 @@ def search():
         return _return_flash_error(["You seem to be searching incorrectly."])
 
     try:
-        top_results, total = sp_handler.get_search(search_type, search_query, market=_get_market_from_cookie())
+        top_results, total, next = sp_handler.get_search(search_type, search_query, market=_get_market_from_cookie())
     except ValueError as err:
         return _return_flash_error([str(err)])
     except ContentNotFoundError as err:
         return _return_flash_error(["There seems to be issues with spotify searching at the moment!", "Try again in a while and hopefully spotify is working correctly again."])
 
-    data = {"results": top_results, "search_query": search_query, "total": total, "search_type": search_type}
+    data = {"results": top_results, "search_query": search_query, "total": total, "search_type": search_type, "next": next}
     return render_template("search.html", data=data)
 
 
@@ -232,6 +232,24 @@ def user_playlists(username):
         return_code = 404
     
     return render_template("user.html", data=data), return_code
+
+
+@app.get("/load-more")
+def load_next_page():
+    page_url = request.args.get("next-page", None)
+    page_type = request.args.get("next-type", None)
+
+    valid_url_format = "https://api.spotify.com/v1/search?"
+    if not page_type or not page_url or not page_url.startswith(valid_url_format):
+        return "Bad request.", 400
+    
+    try:
+        next_items, next_page = sp_handler.get_next_page(page_url, market=_get_market_from_cookie())
+        return {"items": render_template(f"data_tables/{page_type}.html", results=next_items), "next": next_page}
+    except ContentNotFoundError as err:
+        error = err.args[0]["error"]
+        return error["message"], error["status"]
+
 
 if DEBUG_MODE:
     @app.get("/test")
