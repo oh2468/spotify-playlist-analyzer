@@ -12,5 +12,12 @@
         {% include "data_tables/" + data.search_type + ".html" %}
     {% endwith %}
     </table>
+    {% if data.next %}
+    <form action="/load-more" class="load-more-form">
+        <input type="text" name="next-page" class="hide" value="{{ data.next }}">
+        <input type="text" name="next-type" class="hide" value="{{ data.search_type }}">
+        <button>Load More</button>
+    </form>
+    {% endif %}
 </div>
 {% endblock %}
