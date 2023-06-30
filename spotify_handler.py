@@ -172,7 +172,7 @@ class SpotifyHandler:
             response.request.headers = self._session.headers
             new_response = self._session.send(response.request)
             return self._validate_response(new_response, tries + 1)
-        elif response.status_code == 404:
+        elif response.status_code == 400 or response.status_code == 404:
             # print("....ERROR....")
             # print(response)
             # print(response.json())
@@ -424,7 +424,21 @@ class SpotifyHandler:
         self._write_json_content_to_file(results, f"search_{type}")
 
         result_key = f"{type}s"
-        return (results[result_key]["items"], results[result_key]["total"])
+        return (results[result_key]["items"], results[result_key]["total"], results[result_key]["next"])
+
+
+    @_input_validator
+    def get_next_page(self, page, *, market=None):
+        results = self._get_request_to_json_response(page, market)
+
+        self._write_json_content_to_file(results, f"next_page")
+        
+        try:
+            first_result_val = next(iter(results.values()))
+            return (first_result_val["items"], first_result_val["next"])
+        except StopIteration as err:
+            return None
+
 
 
 class InvalidIdFormatError(Exception): pass
