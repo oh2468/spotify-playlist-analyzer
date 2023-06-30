@@ -187,6 +187,35 @@ function toggleLoadingDiv(event) {
     }
 }
 
+function addNextPageContent(event) {
+    event.preventDefault();
+    var form = event.target; 
+    var tableData = form.parentNode.querySelector("tbody");
+
+    var url = form.action + "?" + new URLSearchParams(new FormData(form));;
+    
+    fetch(url)
+    .then(resp => resp.json())
+    .then(data => {
+        var nextRows = data.items.split("<tbody>")[1].split("</tbody>")[0];
+        tableData.innerHTML += nextRows;
+
+        if(data.next) {
+            form.querySelector("input[name='next-page']").value = data.next;
+        } else {
+            form.remove();
+        }
+    })
+    .catch(err => {
+        // console.log(err);
+        // console.log(err.message);
+        form.remove();
+    })
+    .finally(() => {
+        document.getElementById("loading-div").classList.add("hide");
+    });
+
+}
 
 document.querySelectorAll("th").forEach(element => {
     element.addEventListener("click", sortTable);
@@ -224,6 +253,10 @@ Array.from(document.getElementsByTagName("a")).forEach(element => {
 
 Array.from(document.getElementsByTagName("form")).forEach(element => {
     element.addEventListener("submit", toggleLoadingDiv);
+});
+
+Array.from(document.getElementsByClassName("load-more-form")).forEach(element => {
+    element.addEventListener("submit", addNextPageContent)
 });
 
 document.getElementById("user-form").addEventListener("submit", goToUser);
