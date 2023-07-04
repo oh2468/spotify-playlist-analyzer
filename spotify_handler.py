@@ -394,7 +394,7 @@ class SpotifyHandler:
 
         self._write_json_content_to_file(artist_appears_on, "artist_appears_on")
 
-        return (artist_appears_on["items"], artist_appears_on["total"])
+        return (artist_appears_on["items"], artist_appears_on["total"], artist_appears_on["next"])
 
 
     @_spotify_id_format_validator
@@ -410,7 +410,7 @@ class SpotifyHandler:
     def get_user_playlists(self, username, *, market=None):
         playlists = self._get_request_to_json_response(self._USER_PLAYLIST_URL.format(user_id=username), market)
         self._write_json_content_to_file(playlists, "user_base")
-        return (playlists["items"], playlists["total"])
+        return (playlists["items"], playlists["total"], playlists["next"])
 
 
     @_input_validator
@@ -438,6 +438,8 @@ class SpotifyHandler:
             return (first_result_val["items"], first_result_val["next"])
         except StopIteration as err:
             return None
+        except TypeError as err:
+            return (results["items"], results["next"])
 
 
 
