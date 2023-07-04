@@ -200,6 +200,8 @@ function addNextPageContent(event) {
         var nextRows = data.items.split("<tbody>")[1].split("</tbody>")[0].trim();
         tableData.innerHTML += nextRows;
 
+        document.getElementById("load-count").innerText = tableData.getElementsByTagName("tr").length;
+
         if(data.next) {
             form.querySelector("input[name='next-page']").value = data.next;
         } else {
