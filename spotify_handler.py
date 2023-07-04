@@ -429,6 +429,15 @@ class SpotifyHandler:
 
     @_input_validator
     def get_next_page(self, page, *, market=None):
+        valid_page_patterns = [
+            r"https://api.spotify.com/v1/users/.+/playlists\?offset=\d+&limit=50$",
+            r"https://api.spotify.com/v1/search\?query=.+&type=(playlist|album|artist)&offset=\d+&limit=50$",
+            r"https://api.spotify.com/v1/artists/\w{22}/albums\?include_groups=appears_on&offset=\d+&limit=50$"
+        ]
+
+        if not any([re.match(p, page) for p in valid_page_patterns]):
+            raise ValueError("Invalid format of pagination url.")
+
         results = self._get_request_to_json_response(page, market)
 
         self._write_json_content_to_file(results, f"next_page")
