@@ -252,9 +252,12 @@ def load_next_page():
     except ContentNotFoundError as err:
         error = err.args[0]["error"]
         return error["message"], error["status"]
-    except TemplateNotFound as ex:
+    except TemplateNotFound as err:
         # happens if the page_type does not map to a proper resource
         return "", 404
+    except ValueError as err:
+        # happens if the page url has invalid format
+        return str(err), 400
 
 
 if DEBUG_MODE:
