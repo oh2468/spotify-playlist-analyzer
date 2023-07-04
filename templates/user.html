@@ -18,6 +18,11 @@
         {% include "data_tables/playlist.html" %}
     {% endwith %}
     </table>
+    <form action="/load-more" class="load-more-form">
+        <input type="text" name="next-page" class="hide" value="{{ data.next }}">
+        <input type="text" name="next-type" class="hide" value="playlist">
+        <button>Load More</button>
+    </form>
 </div>
 {% endif %}
 {% endblock %}

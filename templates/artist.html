@@ -58,6 +58,11 @@
                     {% include "data_tables/album.html" %}
                 {% endwith %}
             </table>
+            <form action="/load-more" class="load-more-form">
+                <input type="text" name="next-page" class="hide" value="{{ data.next }}">
+                <input type="text" name="next-type" class="hide" value="album">
+                <button>Load More</button>
+            </form>
         </div>
 
         <div class="tab-page hide" id="related_artists">
