@@ -197,7 +197,7 @@ function addNextPageContent(event) {
     fetch(url)
     .then(resp => resp.json())
     .then(data => {
-        var nextRows = data.items.split("<tbody>")[1].split("</tbody>")[0];
+        var nextRows = data.items.split("<tbody>")[1].split("</tbody>")[0].trim();
         tableData.innerHTML += nextRows;
 
         if(data.next) {
@@ -214,7 +214,6 @@ function addNextPageContent(event) {
     .finally(() => {
         document.getElementById("loading-div").classList.add("hide");
     });
-
 }
 
 document.querySelectorAll("th").forEach(element => {
