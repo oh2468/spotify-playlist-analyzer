@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, abort, flash, session
 from spotify_handler import SpotifyHandler, ContentNotFoundError, InvalidIdFormatError
 from functools import wraps
+from jinja2.exceptions import TemplateNotFound
 import playlist_analyzer
 import country_codes
 import pickle
@@ -199,10 +200,11 @@ def artist_lookup(artist_id):
     data["albums"] = sp_handler.get_artist_content(artist_id, "album", market=market)
     data["singles"] = sp_handler.get_artist_content(artist_id, "single", market=market)
     data["compilations"] = sp_handler.get_artist_content(artist_id, "compilation", market=market)
-    appears_on, appears_total = sp_handler.get_artist_appears_on(artist_id, market=market)
+    appears_on, appears_total, next_page = sp_handler.get_artist_appears_on(artist_id, market=market)
     data["appears_on"] = appears_on
     data["appears_on_total"] = appears_total
     data["related_artists"] = sp_handler.get_artist_related(artist_id)
+    data["next"] = next_page
     return render_template("artist.html", data=data)
 
 
@@ -219,10 +221,11 @@ def user_playlists(username):
     data = {"username": username, "user_found": False}
     return_code = 200
     try:
-        playlists = sp_handler.get_user_playlists(username, market=_get_market_from_cookie())
+        playlists, total, next_page = sp_handler.get_user_playlists(username, market=_get_market_from_cookie())
         data["user_found"] = True
-        data["playlists"] = playlists[0]
-        data["total"] = playlists[1]
+        data["playlists"] = playlists
+        data["total"] = total
+        data["next"] = next_page
     except ValueError as err:
         # empty username 
         return _return_flash_error([str(err)])
@@ -238,10 +241,6 @@ def user_playlists(username):
 def load_next_page():
     page_url = request.args.get("next-page", None)
     page_type = request.args.get("next-type", None)
-
-    valid_url_format = "https://api.spotify.com/v1/search?"
-    if not page_type or not page_url or not page_url.startswith(valid_url_format):
-        return "Bad request.", 400
     
     try:
         next_items, next_page = sp_handler.get_next_page(page_url, market=_get_market_from_cookie())
@@ -249,6 +248,9 @@ def load_next_page():
     except ContentNotFoundError as err:
         error = err.args[0]["error"]
         return error["message"], error["status"]
+    except TemplateNotFound as ex:
+        # happens if the page_type does not map to a proper resource
+        return "", 404
 
 
 if DEBUG_MODE:
