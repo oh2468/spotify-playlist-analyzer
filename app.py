@@ -244,6 +244,10 @@ def load_next_page():
     
     try:
         next_items, next_page = sp_handler.get_next_page(page_url, market=_get_market_from_cookie())
+        
+        if not next_items:
+            next_page = None
+        
         return {"items": render_template(f"data_tables/{page_type}.html", results=next_items), "next": next_page}
     except ContentNotFoundError as err:
         error = err.args[0]["error"]
