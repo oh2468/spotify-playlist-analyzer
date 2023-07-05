@@ -155,8 +155,9 @@ function submitMultiAlbums(event) {
 
     if (boxes.length > typeLimit) {
         alert("Too many boxes selected... Max number of selections is: " + typeLimit);
+        toggleLoadingDiv(event);
     } else if (boxes.length == 0) {
-        return;
+        toggleLoadingDiv(event);
     } else {
         var selectedIds = boxes.map(box => box.dataset.value);
         window.location = compareButton.href + selectedIds.join(",")
@@ -191,7 +192,6 @@ function addNextPageContent(event) {
     event.preventDefault();
     var form = event.target;
     var tableData = form.parentNode.getElementsByTagName("tbody")[0];
-    console.log(tableData);
     var lastRowValue = tableData.children.length;
     var lastRow = tableData.lastElementChild;
 
