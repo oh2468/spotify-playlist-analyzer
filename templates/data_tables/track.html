@@ -1,5 +1,6 @@
 <thead>
     <tr>
+        <th data-type="check">Select</th>
         <th data-type="number">No.</th>
         <th data-type="string">Name</th>
         <th data-type="string">Artists</th>
@@ -9,12 +10,13 @@
         <th data-type="string">Release Date</th>
         <th data-type="string">Id</th>
         <th data-type="string">Image</th>
-        <th data-type="string"></th>
+        <th data-type=""><a class="table-button compare-button hide" href="/track/" data-limit="{{ base.limits.track }}">Compare Tracks</a></th>
     </tr>
 </thead>
 <tbody>
     {% for res in results %}
     <tr>
+        <td><form autocomplete="off"><input type="checkbox" class="compare-check" data-value="{{ res['id'] }}"></form></td>
         <td class="data-row-index">{{ loop.index }}</td>
         <td>{{ res["name"] }}</td>
         <td>{{ res["artists"]|format_artists }}</td>
