@@ -154,7 +154,7 @@ function submitMultiAlbums(event) {
     var typeLimit = compareButton.dataset.limit;
 
     if (boxes.length > typeLimit) {
-        alert("Too many boxes selected... Max number of selections is: " + typeLimit);
+        alert("Too many boxes selected... Max number of selections is: " + typeLimit + "\nYou have currently selected: " + boxes.length);
         toggleLoadingDiv(event);
     } else if (boxes.length == 0) {
         toggleLoadingDiv(event);
