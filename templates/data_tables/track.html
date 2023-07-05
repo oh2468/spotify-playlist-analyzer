@@ -15,7 +15,7 @@
 <tbody>
     {% for res in results %}
     <tr>
-        <td>{{ loop.index }}</td>
+        <td class="data-row-index">{{ loop.index }}</td>
         <td>{{ res["name"] }}</td>
         <td>{{ res["artists"]|format_artists }}</td>
         <td>{{ res["album"]["name"] }}</td>

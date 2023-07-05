@@ -13,7 +13,7 @@
 <tbody>
     {% for res in results %}
     <tr>
-        <td>{{ loop.index }}</td>
+        <td class="data-row-index">{{ loop.index }}</td>
         <td>{{ res["name"] }}</td>
         <td>{{ res["popularity"] }}</td>
         <td>{{ res["followers"]["total"] }}</td>

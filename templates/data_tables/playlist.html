@@ -15,7 +15,7 @@
     {% for res in results %}
     <tr>
         <td><input type="checkbox" class="compare-check" data-value="{{ res['id'] }}" autocomplete="off"></td>
-        <td>{{ loop.index }}</td>
+        <td class="data-row-index">{{ loop.index }}</td>
         <td>{{ res["name"] }}</td>
         <td>{{ res["owner"]["display_name"] }}</td>
         <td>{{ res["owner"]["id"] }}</td>
