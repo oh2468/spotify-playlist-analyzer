@@ -21,7 +21,7 @@ function sortTable(event) {
     } else if (sortType === "number") {
         var sorted = analysis_table_data.sort((a, b) => Number(a.children[colNo].innerText) > Number(b.children[colNo].innerText));
     } else if (sortType === "check") {
-        var sorted = analysis_table_data.sort((a, b) => a.children[colNo].firstChild.checked >= b.children[colNo].firstChild.checked);
+        var sorted = analysis_table_data.sort((a, b) => a.children[colNo].firstChild.firstChild.checked >= b.children[colNo].firstChild.firstChild.checked);
     } else {
         return;
     }
