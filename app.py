@@ -208,11 +208,12 @@ def artist_lookup(artist_id):
     return render_template("artist.html", data=data)
 
 
-@app.get("/track/<track_id>")
+@app.get("/track/<track_ids>")
 @_error_handler
-def single_track_analysis(track_id):
-    analysis_data = sp_handler.get_tracks_analytics([track_id], market=_get_market_from_cookie())
-    analysis_data.name = "< single track >"
+def track_analysis(track_ids):
+    ids = track_ids.split(",")
+    analysis_data = sp_handler.get_tracks_analytics(ids, market=_get_market_from_cookie())
+    analysis_data.name = f"< selected track{'s' if len(ids) > 1 else ''} >"
     return _do_analysis([analysis_data])
 
 
