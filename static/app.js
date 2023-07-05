@@ -189,16 +189,27 @@ function toggleLoadingDiv(event) {
 
 function addNextPageContent(event) {
     event.preventDefault();
-    var form = event.target; 
-    var tableData = form.parentNode.querySelector("tbody");
+    var form = event.target;
+    var tableData = form.parentNode.getElementsByTagName("tbody")[0];
+    console.log(tableData);
+    var lastRowValue = tableData.children.length;
+    var lastRow = tableData.lastElementChild;
 
     var url = form.action + "?" + new URLSearchParams(new FormData(form));;
     
     fetch(url)
     .then(resp => resp.json())
     .then(data => {
-        var nextRows = data.items.split("<tbody>")[1].split("</tbody>")[0].trim();
-        tableData.innerHTML += nextRows;
+        var htmlDoc = "<html><table>" + data.items + "</table></html>"
+        var cont = new DOMParser().parseFromString(htmlDoc, "text/html");
+        var newRows = Array.from(cont.querySelector("tbody").querySelectorAll("tr")).reverse();
+
+        newRows.forEach(r => {
+            var currRowIndex = r.querySelector(".data-row-index");
+            var currValue = Number(currRowIndex.innerText);
+            currRowIndex.innerText = currValue + lastRowValue;
+            tableData.insertBefore(r, lastRow.nextSibling);
+        });
 
         document.getElementById("load-count").innerText = tableData.getElementsByTagName("tr").length;
 
@@ -214,9 +225,10 @@ function addNextPageContent(event) {
         form.remove();
     })
     .finally(() => {
-        document.getElementById("loading-div").classList.add("hide");
+        toggleLoadingDiv(event);
     });
 }
+
 
 document.querySelectorAll("th").forEach(element => {
     element.addEventListener("click", sortTable);
