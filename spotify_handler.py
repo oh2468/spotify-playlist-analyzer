@@ -31,7 +31,7 @@ class SpotifyHandler:
     _AUDIO_FEATURE_LIMIT = 50
     _TRACK_ID_LIMIT = 50
     _SEARCH_LIMIT = 50
-    _VALID_SEARCH_TYPES = ["playlist", "artist", "album"]
+    _VALID_SEARCH_TYPES = ["playlist", "artist", "album", "track"]
     _VALID_ARTIST_CONTENT_TYPES = ["album", "single", "compilation", "appears_on"]
     _VALID_LINK_TYPES = ["playlist", "album", "track"]
     MAX_MULTI_PLAYLIST = 3
