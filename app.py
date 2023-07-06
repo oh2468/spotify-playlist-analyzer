@@ -26,6 +26,11 @@ def format_artists(artists):
     return ", ".join(artist["name"] for artist in artists)
 
 
+@app.template_filter("float_rounder")
+def format_float(f):
+    return playlist_analyzer.float_to_int_rounder(f)
+
+
 @app.context_processor
 def inject_base_data():
     if sp_handler is None: return {}
