@@ -212,7 +212,7 @@ th, td {
     margin: auto;
 }
 
-.chart-button {
+.chart-button, .load-more-form button {
     background-color: black;
     color: white;
     border-radius: 6px;
@@ -296,7 +296,7 @@ th, td {
     text-align: center;
 }
 
-#loading-button, .load-more-form button {
+#loading-button {
     background-color: orange;
     border-radius: 12px;
     width: 40%;
