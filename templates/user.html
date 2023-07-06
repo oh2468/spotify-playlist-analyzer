@@ -2,7 +2,7 @@
 
 
 {% block header %}
-<h1>{% block title %}User{% endblock %} playlists for: <span id="search-query">{{ data.username }}</span></h1>
+<h1>{% block title %}User{% endblock %} playlists for: <span class="search-query">{{ data.username }}</span></h1>
 {% if data.user_found %}
 <h2>Showing <span id="load-count">{{ data.playlists|count }}</span> of {{ data.total }} public playlists.</h2>
 {% else %}
