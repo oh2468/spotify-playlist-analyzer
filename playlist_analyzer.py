@@ -98,7 +98,6 @@ data_descriptions = {
 
 
 def get_data_charts(data, debug_mode=False):
-    # print(f"LENGTH OF DATA: {len(data)}")
     if not data:
         return {}
 
@@ -120,8 +119,8 @@ def get_data_charts(data, debug_mode=False):
 
         for key, value in seperated_data.items():
             analysis_value = af[key]
-            value["data"].append(analysis_value)
-            value["total"] += analysis_value
+            value["data"].append(analysis_value if key != "tempo" else round(analysis_value))
+            value["total"] += value["data"][-1]
 
 
     for key, value in seperated_data.items():
@@ -154,9 +153,6 @@ def get_data_charts(data, debug_mode=False):
 
         if key == "loudness":
             line_plot.range = (-60, 0)
-
-        if key == "tempo":
-            line_plot.value_formatter = float_to_int_rounder
 
         debug_charts[f"line_plot_{key}"] = line_plot
         data_charts[key].append(line_plot.render_data_uri())

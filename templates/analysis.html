@@ -67,7 +67,7 @@
                                 <td>{{ tr["track"]["album"]["name"] }}</td>
                                 <td>{{ tr["track"]["duration_ms"] | format_time }}</td>
                                 <td>{{ tr["track"]["popularity"] }}</td>
-                                <td>{{ tr["audio_feature"]["tempo"]|round|int }}</td>
+                                <td>{{ tr["audio_feature"]["tempo"] | float_rounder }}</td>
                                 <td>{{ tr["audio_feature"]["danceability"] }}</td>
                                 <td>{{ tr["audio_feature"]["energy"] }}</td>
                                 <td>{{ tr["audio_feature"]["valence"] }}</td>
