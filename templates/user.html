@@ -13,7 +13,7 @@
 {% block content %}
 {% if data.user_found%}
 <div class="table-container">
-    <table id="user-contant-table">
+    <table>
     {% with results = data.playlists %}
         {% include "data_tables/playlist.html" %}
     {% endwith %}
