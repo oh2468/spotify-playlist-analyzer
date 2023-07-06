@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
-<h1>{% block title %}Artist{% endblock %} results for: <span id="search-query">{{ data.artist.name }}</span></h1>
+<h1>{% block title %}Artist{% endblock %} results for: <span class="search-query">{{ data.artist.name }}</span></h1>
 <h2 class="artist-info">Visit them on spotify: 
     <a href="{{ data.artist.external_urls.spotify }}" rel="noreferrer" target="_blank">FOLLOW THEM</a>
      and join the other <span>{{ data.artist.followers.total }}</span> artist followers.
@@ -11,12 +11,13 @@
 {% block content %}
 <div class="tab-area">
     <div class="tab-buttons">
-        <button class="tab-button active">Top tracks</button>
-        <button class="tab-button">Albums</button>
-        <button class="tab-button">Singles</button>
-        <button class="tab-button">Compilations</button>
-        <button class="tab-button">Appears on (<span id="load-count">{{ data.appears_on|length }}</span> of {{ data.appears_on_total }})</button>
-        <button class="tab-button">Related artists</button>
+        <button class="tab-button active">Top tracks ({{ data.top_tracks|length }})</button>
+        <button class="tab-button">Albums ({{ data.albums|length }})</button>
+        <button class="tab-button">Singles ({{ data.singles|length }})</button>
+        <button class="tab-button">Compilations ({{ data.compilations|length }})</button>
+        {% set app_count = data.appears_on|length %}
+        <button class="tab-button">Appears on (<span id="load-count">{{ app_count }}</span>{% if app_count != data.appears_on_total %} of {{ data.appears_on_total }}{% endif %})</button>
+        <button class="tab-button">Related artists ({{ data.related_artists|length }})</button>
     </div>
     
     <div class="tab-content">
