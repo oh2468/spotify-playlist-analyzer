@@ -143,14 +143,12 @@ def search():
 @app.post("/playlist-urls")
 def analyze_urls():
     urls = _clean_spotify_urls(request.form.get("spotify-urls", ""))
-    print(urls)
 
     try:
         url_type = urls[0].split("/")[3]
     except:
         url_type = None # failed to extract url type
     
-    print(url_type)
 
     if url_type == "track":
         return _analyze_tracks(urls)

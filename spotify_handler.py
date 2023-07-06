@@ -154,9 +154,7 @@ class SpotifyHandler:
         # a decision needs to be made on how to handle those situations
         # looks to be this closed issue: https://github.com/spotify/web-api/issues/1570
         joined_track_features = [track_map[af["id"]] | {"audio_feature": af} for af in audio_features if af]
-
         self._write_json_content_to_file(joined_track_features, "analysis_joined")
-
         return joined_track_features
 
 
@@ -184,7 +182,6 @@ class SpotifyHandler:
 
 
     def _recurse_all_page_items(self, data, market=None):
-        # print("iterating pages")
         if not data["next"]:
             return data["items"]
         else:
@@ -226,9 +223,7 @@ class SpotifyHandler:
         if market:
             add_market = f"&market={market}" if "?" in formatted_url else f"?market={market}"
             formatted_url = f"{formatted_url}{add_market}"
-        
-        # print(formatted_url)
-        
+                
         response = self._session.get(formatted_url)
         response = self._validate_response(response)
         return response.json()
@@ -277,7 +272,6 @@ class SpotifyHandler:
         self._assert_number_of_ids(playlist_ids, "playlist")
 
         all_analysis_results = []
-        
         for playlist_id in playlist_ids:
             try:
                 playlist = self._get_request_to_json_response(self._PLAYLIST_URL.format(id=playlist_id), market)
@@ -294,7 +288,6 @@ class SpotifyHandler:
             all_analysis_results.append(AnalysisResult(playlist["name"], playlist["type"], playlist["tracks"]["total"], track_map, af_tracks_joined, self._DEBUG_MODE))
         
         self._validate_output(all_analysis_results, playlist_ids)
-
         return all_analysis_results
 
 
@@ -303,12 +296,9 @@ class SpotifyHandler:
         self._assert_number_of_ids(track_ids, "track")
 
         spotify_tracks = self._loop_requests_with_limit(self._TRACKS_URL, track_ids, self._TRACK_ID_LIMIT, market)
-        
         self._write_json_content_to_file(spotify_tracks, "tracks")
-       
         track_map = {track["id"]: {"track": track} for track in spotify_tracks if track}
         af_tracks_joined = self._get_audio_features(track_map)
-
         return AnalysisResult("", "track", len(track_ids), track_map, af_tracks_joined, self._DEBUG_MODE)
 
 
@@ -318,11 +308,8 @@ class SpotifyHandler:
 
         albums = self._get_request_to_json_response(self._ALBUM_MULTI_URL.format(ids=",".join(album_ids)), market)
         albums = [album for album in albums["albums"] if album]
-
         self._write_json_content_to_file(albums, "album_multi_base")
-
         self._validate_output(albums, album_ids)
-        
         album_map = {album["id"]: album for album in albums}
 
         all_album_tracks = []
@@ -330,7 +317,6 @@ class SpotifyHandler:
             all_album_tracks += self._recurse_all_page_items(album["tracks"], market)
 
         self._write_json_content_to_file(all_album_tracks, "multi_album_test_file")
-
         all_track_ids = [track["id"] for track in all_album_tracks]
         all_track_analytics = self.get_tracks_analytics(all_track_ids, market=market)
 
@@ -357,9 +343,7 @@ class SpotifyHandler:
     @_spotify_id_format_validator
     def get_artist(self, artist_id):
         artist = self._get_request_to_json_response(self._ARTIST_URL.format(id=artist_id))
-
         self._write_json_content_to_file(artist, "artist_base")
-
         return artist
 
 
@@ -370,9 +354,7 @@ class SpotifyHandler:
         
         artist_type = self._get_request_to_json_response(self._ARTIST_CONTENT_URL.format(id=artist_id, type=type), market)
         artist_content = self._recurse_all_page_items(artist_type, market)
-
         self._write_json_content_to_file(artist_content, f"artist_{type}")
-
         return artist_content
 
 
@@ -382,27 +364,21 @@ class SpotifyHandler:
             market = "SE"
         
         artist_top_tracks = self._get_request_to_json_response(self._ARTIST_TOP_TRACKS.format(id=artist_id), market)
-        
         self._write_json_content_to_file(artist_top_tracks, "artist_top_tracks")
-
         return artist_top_tracks["tracks"]
     
 
     @_spotify_id_format_validator
     def get_artist_appears_on(self, artist_id, *, market=None):
         artist_appears_on = self._get_request_to_json_response(self._ARTIST_APPEARS_ON_URL.format(id=artist_id), market)
-
         self._write_json_content_to_file(artist_appears_on, "artist_appears_on")
-
         return (artist_appears_on["items"], artist_appears_on["total"], artist_appears_on["next"])
 
 
     @_spotify_id_format_validator
     def get_artist_related(self, artist_id):
         related_artists = self._get_request_to_json_response(self._ARTIST_RELATED.format(id=artist_id))
-
         self._write_json_content_to_file(related_artists, "artist_related")
-
         return related_artists["artists"]
 
 
@@ -420,9 +396,7 @@ class SpotifyHandler:
 
         req_url = self._SEARCH_URL.format(q=search, type=type, limit=self._SEARCH_LIMIT)
         results = self._get_request_to_json_response(req_url, market)
-
         self._write_json_content_to_file(results, f"search_{type}")
-
         result_key = f"{type}s"
         return (results[result_key]["items"], results[result_key]["total"], results[result_key]["next"])
 
@@ -439,7 +413,6 @@ class SpotifyHandler:
             raise ValueError("Invalid format of pagination url.")
 
         results = self._get_request_to_json_response(page, market)
-
         self._write_json_content_to_file(results, f"next_page")
         
         try:
