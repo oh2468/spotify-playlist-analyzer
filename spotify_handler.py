@@ -405,7 +405,7 @@ class SpotifyHandler:
     def get_next_page(self, page, *, market=None):
         valid_page_patterns = [
             r"https://api.spotify.com/v1/users/.+/playlists\?offset=\d+&limit=50$",
-            r"https://api.spotify.com/v1/search\?query=.+&type=(playlist|album|artist)&offset=\d+&limit=50$",
+            r"https://api.spotify.com/v1/search\?query=.+&type=(playlist|album|artist|track)&offset=\d+&limit=50$",
             r"https://api.spotify.com/v1/artists/\w{22}/albums\?include_groups=appears_on&offset=\d+&limit=50$"
         ]
 
